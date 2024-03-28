@@ -1,3 +1,5 @@
+// https://www.youtube.com/watch?v=opA9Tc-cqgc
+
 // SELECT CANVAS ELEMENT
 const cvs = document.getElementById("canvas");
 const ctx = cvs.getContext("2d");
@@ -8,7 +10,7 @@ const PADDLE_MARGIN_BOTTOM = 5;
 const PADDLE_HEIGHT = 10;
 const BALL_RADIUS = 6;
 const SCORE_UNIT = 10;
-const MAX_LEVEL = 10;
+const MAX_ROWS = 10;
 
 let LIVES = 3; // PLAYER HAS 3 LIVES
 let SCORE = 0;
@@ -33,6 +35,22 @@ function drawPaddle() {
 }
 
 // CONTROL THE PADDLE
+cvs.addEventListener("touchstart", function (event) {
+	let touchX = event.touches[0].clientX;
+	// Check if touch is on the left half of the screen
+	if (touchX < cvs.width / 2) {
+		leftArrow = true;
+	} else {
+		rightArrow = true;
+	}
+});
+
+// Touch end event listener
+cvs.addEventListener("touchend", function () {
+	leftArrow = false;
+	rightArrow = false;
+});
+
 document.addEventListener("keydown", function (event) {
 	if (event.code == "ArrowLeft") {
 		leftArrow = true;
@@ -143,10 +161,10 @@ function ballPaddleCollision() {
 // CREATE THE BRICKS
 const brick = {
 	row: 3,
-	column: 7,
+	column: 10,
 	width: 50,
 	height: 10,
-	offSetLeft: 6,
+	offSetLeft: 5,
 	offSetTop: 8,
 	marginTop: 40,
 	fillColor: "skyblue",
@@ -241,7 +259,7 @@ function draw() {
 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
 	ctx.shadowBlur = 9; // Blur amount
-	ctx.fillText("Level: " + LEVEL, 150, 25);
+	ctx.fillText("Level: " + LEVEL, 200, 25);
 
 	// Draw level
 	ctx.fillStyle = "lightgreen";
@@ -250,15 +268,54 @@ function draw() {
 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
 	ctx.shadowBlur = 9; // Blur amount
-	ctx.fillText("Lives: " + LIVES, 300, 25);
+	ctx.fillText("Lives: " + LIVES, 400, 25);
 }
 
 // game over
 function gameOver() {
 	if (LIVES <= 0) {
+		//Game Over !!
+		ctx.font = "40px Comic Sans MS";
+		ctx.fillStyle = "red";
+		ctx.shadowColor = "black"; // Shadow color
+		ctx.shadowOffsetX = 2; // Horizontal shadow offset
+		ctx.shadowOffsetY = 2; // Vertical shadow offset
+		ctx.shadowBlur = 9; // Blur amount
+		ctx.fillText("GAME OVER !!", 110, 200);
+		// Score
+		ctx.font = "30px Comic Sans MS";
+		ctx.fillStyle = "yellow";
+		ctx.shadowColor = "black"; // Shadow color
+		ctx.shadowOffsetX = 2; // Horizontal shadow offset
+		ctx.shadowOffsetY = 2; // Vertical shadow offset
+		ctx.shadowBlur = 9; // Blur amount
+		ctx.fillText("Score: " + SCORE, 170, 250);
+		// Press restart
+		ctx.font = "20px Comic Sans MS";
+		ctx.fillStyle = "lightgreen";
+		ctx.shadowColor = "black"; // Shadow color
+		ctx.shadowOffsetX = 2; // Horizontal shadow offset
+		ctx.shadowOffsetY = 2; // Vertical shadow offset
+		ctx.shadowBlur = 9; // Blur amount
+		ctx.fillText("Tap to 'RESTART'", 160, 290);
+
 		GAME_OVER = true;
 	}
 }
+
+// Touch start event listener for restarting the game
+cvs.addEventListener("touchstart", function () {
+	if (GAME_OVER) {
+		// Reset game variables
+		LIVES = 3;
+		SCORE = 0;
+		LEVEL = 1;
+		GAME_OVER = false;
+		createBricks();
+		resetBall();
+		loop(); // Restart the game loop
+	}
+});
 
 // level up
 function levelUp() {
@@ -273,10 +330,6 @@ function levelUp() {
 
 	if (isLevelDone) {
 		WIN.play();
-		if (LEVEL >= MAX_LEVEL) {
-			GAME_OVER = true;
-			return;
-		}
 		brick.row++;
 		createBricks();
 		ball.speed += 0.5;
@@ -298,43 +351,12 @@ function update() {
 
 // GAME LOOP
 function loop() {
+	if (!GAME_OVER) {
+		requestAnimationFrame(loop);
+	}
 	// CLEAR THE CANVAS
 	ctx.clearRect(0, 0, cvs.width, cvs.height);
 	draw();
 	update();
-	if (!GAME_OVER) {
-		requestAnimationFrame(loop);
-	}
 }
 loop();
-
-// SELECT SOUND ELEMENT
-const soundElement = document.getElementById("sound");
-
-soundElement.addEventListener("click", audioManager);
-
-function audioManager() {
-	// CHANGE IMAGE SOUND_ON/OFF
-	let imgSrc = soundElement.getAttribute("src");
-	let SOUND_IMG =
-		imgSrc == "img/SOUND_ON.png" ? "img/SOUND_OFF.png" : "img/SOUND_ON.png";
-
-	soundElement.setAttribute("src", SOUND_IMG);
-
-	// MUTE AND UNMUTE SOUNDS
-	WALL_HIT.muted = WALL_HIT.muted ? false : true;
-	PADDLE_HIT.muted = PADDLE_HIT.muted ? false : true;
-	BRICK_HIT.muted = BRICK_HIT.muted ? false : true;
-	WIN.muted = WIN.muted ? false : true;
-	LIFE_LOST.muted = LIFE_LOST.muted ? false : true;
-}
-
-// SHOW GAME OVER MESSAGE
-/* SELECT ELEMENTS */
-const gameover = document.getElementById("gameover");
-const restart = document.getElementById("restart");
-
-// CLICK ON PLAY AGAIN BUTTON
-restart.addEventListener("click", function () {
-	location.reload(); // reload the page
-});
