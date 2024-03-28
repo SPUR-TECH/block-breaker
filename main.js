@@ -3,13 +3,19 @@ const cvs = document.getElementById("canvas");
 const ctx = cvs.getContext("2d");
 
 // GAME VARIABLES AND CONSTANTS
-const PADDLE_WIDTH = 100;
+const PADDLE_WIDTH = 80;
 const PADDLE_MARGIN_BOTTOM = 5;
-const PADDLE_HEIGHT = 20;
-const BALL_RADIUS = 8;
-let LIFE = 3; // PLAYER HAS 3 LIVES
+const PADDLE_HEIGHT = 10;
+const BALL_RADIUS = 6;
+const SCORE_UNIT = 10;
+const MAX_LEVEL = 10;
+
+let LIVES = 3; // PLAYER HAS 3 LIVES
+let SCORE = 0;
+let LEVEL = 1;
 let leftArrow = false;
 let rightArrow = false;
+let GAME_OVER = false;
 
 // CREATE THE PADDLE
 const paddle = {
@@ -22,11 +28,8 @@ const paddle = {
 
 // DRAW PADDLE
 function drawPaddle() {
-	ctx.fillStyle = "#2e3548";
+	ctx.fillStyle = "lightgreen";
 	ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
-
-	ctx.strokeStyle = "#ffcd05";
-	ctx.strokeRect(paddle.x, paddle.y, paddle.width, paddle.height);
 }
 
 // CONTROL THE PADDLE
@@ -98,6 +101,7 @@ function resetBall() {
 function ballWallCollision() {
 	if (ball.x + ball.radius > cvs.width || ball.x - ball.radius < 0) {
 		ball.dx = -ball.dx;
+		WALL_HIT.play();
 	}
 
 	if (ball.y - ball.radius < 0) {
@@ -105,7 +109,8 @@ function ballWallCollision() {
 	}
 
 	if (ball.y + ball.radius > cvs.height) {
-		LIFE--; // LOSE LIFE
+		LIVES--; // LOSE LIFE
+		LIFE_LOST.play();
 		resetBall();
 	}
 }
@@ -118,6 +123,9 @@ function ballPaddleCollision() {
 		paddle.y < paddle.y + paddle.height &&
 		ball.y > paddle.y
 	) {
+		// PLAY SOUND
+		PADDLE_HIT.play();
+
 		// CHECK WHERE THE BALL HIT THE PADDLE
 		let collidePoint = ball.x - (paddle.x + paddle.width / 2);
 
@@ -132,12 +140,149 @@ function ballPaddleCollision() {
 	}
 }
 
+// CREATE THE BRICKS
+const brick = {
+	row: 3,
+	column: 7,
+	width: 50,
+	height: 10,
+	offSetLeft: 6,
+	offSetTop: 8,
+	marginTop: 40,
+	fillColor: "skyblue",
+};
+
+let bricks = [];
+
+function createBricks() {
+	for (let r = 0; r < brick.row; r++) {
+		bricks[r] = [];
+		for (let c = 0; c < brick.column; c++) {
+			bricks[r][c] = {
+				x: c * (brick.offSetLeft + brick.width) + brick.offSetLeft,
+				y:
+					r * (brick.offSetTop + brick.height) +
+					brick.offSetTop +
+					brick.marginTop,
+				status: true,
+			};
+		}
+	}
+}
+
+createBricks();
+
+// draw the bricks
+function drawBricks() {
+	for (let r = 0; r < brick.row; r++) {
+		for (let c = 0; c < brick.column; c++) {
+			let b = bricks[r][c];
+			// if the brick isn't broken
+			if (b.status) {
+				ctx.fillStyle = brick.fillColor;
+				ctx.fillRect(b.x, b.y, brick.width, brick.height);
+			}
+		}
+	}
+}
+
+// ball brick collision
+function ballBrickCollision() {
+	for (let r = 0; r < brick.row; r++) {
+		for (let c = 0; c < brick.column; c++) {
+			let b = bricks[r][c];
+			// if the brick isn't broken
+			if (b.status) {
+				if (
+					ball.x + ball.radius > b.x &&
+					ball.x - ball.radius < b.x + brick.width &&
+					ball.y + ball.radius > b.y &&
+					ball.y - ball.radius < b.y + brick.height
+				) {
+					BRICK_HIT.play();
+					ball.dy = -ball.dy;
+					b.status = false; // the brick is broken
+					SCORE += SCORE_UNIT;
+				}
+			}
+		}
+	}
+}
+
+// show game stats
+function showGameStats(text, textX, textY, img, imgX, imgY) {
+	// draw text
+	ctx.fillStyle = "white";
+	ctx.font = "25px Comic Sans MS";
+	ctx.fillText(text, textX, textY);
+
+	// draw image
+	ctx.drawImage(img, imgX, imgY, 25, 25);
+}
+
 // DRAW FUNCTION
 function draw() {
 	drawPaddle();
 	drawBall();
+	drawBricks();
+	// Draw score
+	ctx.fillStyle = "yellow";
+	ctx.font = "20px Comic Sans MS";
+	ctx.shadowColor = "black"; // Shadow color
+	ctx.shadowOffsetX = 2; // Horizontal shadow offset
+	ctx.shadowOffsetY = 2; // Vertical shadow offset
+	ctx.shadowBlur = 9; // Blur amount
+	ctx.fillText("Score: " + SCORE, 10, 25);
 
-	// drawBall();
+	// Draw level
+	ctx.fillStyle = "white";
+	ctx.font = "20px Comic Sans MS";
+	ctx.shadowColor = "black"; // Shadow color
+	ctx.shadowOffsetX = 2; // Horizontal shadow offset
+	ctx.shadowOffsetY = 2; // Vertical shadow offset
+	ctx.shadowBlur = 9; // Blur amount
+	ctx.fillText("Level: " + LEVEL, 150, 25);
+
+	// Draw level
+	ctx.fillStyle = "lightgreen";
+	ctx.font = "20px Comic Sans MS";
+	ctx.shadowColor = "black"; // Shadow color
+	ctx.shadowOffsetX = 2; // Horizontal shadow offset
+	ctx.shadowOffsetY = 2; // Vertical shadow offset
+	ctx.shadowBlur = 9; // Blur amount
+	ctx.fillText("Lives: " + LIVES, 300, 25);
+}
+
+// game over
+function gameOver() {
+	if (LIVES <= 0) {
+		GAME_OVER = true;
+	}
+}
+
+// level up
+function levelUp() {
+	let isLevelDone = true;
+
+	// check if all the bricks are broken
+	for (let r = 0; r < brick.row; r++) {
+		for (let c = 0; c < brick.column; c++) {
+			isLevelDone = isLevelDone && !bricks[r][c].status;
+		}
+	}
+
+	if (isLevelDone) {
+		WIN.play();
+		if (LEVEL >= MAX_LEVEL) {
+			GAME_OVER = true;
+			return;
+		}
+		brick.row++;
+		createBricks();
+		ball.speed += 0.5;
+		resetBall();
+		LEVEL++;
+	}
 }
 
 // UPDATE GAME FUNCTION
@@ -146,16 +291,50 @@ function update() {
 	moveBall();
 	ballWallCollision();
 	ballPaddleCollision();
+	ballBrickCollision();
+	gameOver();
+	levelUp();
 }
 
 // GAME LOOP
 function loop() {
 	// CLEAR THE CANVAS
 	ctx.clearRect(0, 0, cvs.width, cvs.height);
-	requestAnimationFrame(loop);
-
 	draw();
-
 	update();
+	if (!GAME_OVER) {
+		requestAnimationFrame(loop);
+	}
 }
 loop();
+
+// SELECT SOUND ELEMENT
+const soundElement = document.getElementById("sound");
+
+soundElement.addEventListener("click", audioManager);
+
+function audioManager() {
+	// CHANGE IMAGE SOUND_ON/OFF
+	let imgSrc = soundElement.getAttribute("src");
+	let SOUND_IMG =
+		imgSrc == "img/SOUND_ON.png" ? "img/SOUND_OFF.png" : "img/SOUND_ON.png";
+
+	soundElement.setAttribute("src", SOUND_IMG);
+
+	// MUTE AND UNMUTE SOUNDS
+	WALL_HIT.muted = WALL_HIT.muted ? false : true;
+	PADDLE_HIT.muted = PADDLE_HIT.muted ? false : true;
+	BRICK_HIT.muted = BRICK_HIT.muted ? false : true;
+	WIN.muted = WIN.muted ? false : true;
+	LIFE_LOST.muted = LIFE_LOST.muted ? false : true;
+}
+
+// SHOW GAME OVER MESSAGE
+/* SELECT ELEMENTS */
+const gameover = document.getElementById("gameover");
+const restart = document.getElementById("restart");
+
+// CLICK ON PLAY AGAIN BUTTON
+restart.addEventListener("click", function () {
+	location.reload(); // reload the page
+});
