@@ -5,7 +5,7 @@
  }
 
  #canvas {
-     background-image: linear-gradient(rgb(0, 2, 143), black);
+     background-image: linear-gradient(rgb(0, 2, 92), black);
      border-top: 8px solid rgb(121, 0, 0);
      border-left: 8px solid rgb(216, 0, 0);
      border-right: 8px solid rgb(216, 0, 0);

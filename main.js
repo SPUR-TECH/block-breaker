@@ -12,7 +12,7 @@ const BALL_RADIUS = 6;
 const SCORE_UNIT = 10;
 const MAX_ROWS = 10;
 
-let LIVES = 3; // PLAYER HAS 3 LIVES
+let LIVES = 0; // PLAYER HAS 3 LIVES
 let SCORE = 0;
 let LEVEL = 1;
 let leftArrow = false;
@@ -30,8 +30,37 @@ const paddle = {
 
 // DRAW PADDLE
 function drawPaddle() {
-	ctx.fillStyle = "lightgreen";
-	ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+	// Create linear gradient for paddle (from top to bottom)
+	let paddleGradient = ctx.createLinearGradient(
+		paddle.x,
+		paddle.y,
+		paddle.x,
+		paddle.y + paddle.height,
+	);
+	paddleGradient.addColorStop(0, "lightgreen");
+	paddleGradient.addColorStop(1, "darkgreen");
+	ctx.fillStyle = paddleGradient;
+	let radius = paddle.height / 2; // Radius for rounded corners
+	ctx.beginPath();
+	ctx.moveTo(paddle.x + radius, paddle.y);
+	ctx.arcTo(
+		paddle.x + paddle.width,
+		paddle.y,
+		paddle.x + paddle.width,
+		paddle.y + paddle.height,
+		radius,
+	);
+	ctx.arcTo(
+		paddle.x + paddle.width,
+		paddle.y + paddle.height,
+		paddle.x,
+		paddle.y + paddle.height,
+		radius,
+	);
+	ctx.arcTo(paddle.x, paddle.y + paddle.height, paddle.x, paddle.y, radius);
+	ctx.arcTo(paddle.x, paddle.y, paddle.x + paddle.width, paddle.y, radius);
+	ctx.closePath();
+	ctx.fill();
 }
 
 // CONTROL THE PADDLE
@@ -49,6 +78,21 @@ cvs.addEventListener("touchstart", function (event) {
 cvs.addEventListener("touchend", function () {
 	leftArrow = false;
 	rightArrow = false;
+});
+
+document.addEventListener("keydown", function (event) {
+	if (event.code === "Space") {
+		if (GAME_OVER) {
+			// Reset game variables
+			LIVES = 3;
+			SCORE = 0;
+			LEVEL = 1;
+			GAME_OVER = false;
+			createBricks();
+			resetBall();
+			loop(); // Restart the game loop
+		}
+	}
 });
 
 document.addEventListener("keydown", function (event) {
@@ -160,34 +204,37 @@ function ballPaddleCollision() {
 
 // CREATE THE BRICKS
 const brick = {
-	row: 3,
-	column: 10,
+	row: 2,
+	column: 7,
 	width: 50,
 	height: 10,
-	offSetLeft: 5,
+	offSetLeft: 6,
 	offSetTop: 8,
-	marginTop: 40,
+	marginTop: 60,
 	fillColor: "skyblue",
 };
 
 let bricks = [];
 
 function createBricks() {
-	for (let r = 0; r < brick.row; r++) {
-		bricks[r] = [];
-		for (let c = 0; c < brick.column; c++) {
-			bricks[r][c] = {
-				x: c * (brick.offSetLeft + brick.width) + brick.offSetLeft,
-				y:
-					r * (brick.offSetTop + brick.height) +
-					brick.offSetTop +
-					brick.marginTop,
-				status: true,
-			};
+	if (bricks.length === 0 || bricks.length < LEVEL + 1) {
+		// Add a new row of bricks only if there are no bricks or if the number of rows is less than LEVEL + 1
+		for (let r = 0; r < LEVEL + 1; r++) {
+			bricks[r] = [];
+			for (let c = 0; c < brick.column; c++) {
+				bricks[r][c] = {
+					x: c * (brick.offSetLeft + brick.width) + brick.offSetLeft,
+					y:
+						r * (brick.offSetTop + brick.height) +
+						brick.offSetTop +
+						brick.marginTop,
+					status: true,
+				};
+			}
 		}
+		brick.row = LEVEL + 1; // Update the number of rows for bricks
 	}
 }
-
 createBricks();
 
 // draw the bricks
@@ -197,8 +244,37 @@ function drawBricks() {
 			let b = bricks[r][c];
 			// if the brick isn't broken
 			if (b.status) {
-				ctx.fillStyle = brick.fillColor;
+				// Create linear gradient for brick (from top to bottom)
+				let brickGradient = ctx.createLinearGradient(
+					b.x,
+					b.y,
+					b.x,
+					b.y + brick.height,
+				);
+				brickGradient.addColorStop(0, "lightblue"); // Light blue at top
+				brickGradient.addColorStop(1, "blue"); // Dark blue at bottom
+				ctx.fillStyle = brickGradient;
+
+				// Draw brick with shadow
+				ctx.shadowColor = "red"; // Shadow color
+				ctx.shadowBlur = 4; // Blur amount
+				ctx.shadowOffsetX = 2; // Horizontal shadow offset
+				ctx.shadowOffsetY = 2; // Vertical shadow offset
 				ctx.fillRect(b.x, b.y, brick.width, brick.height);
+
+				// Reset shadow properties
+				ctx.shadowColor = "transparent";
+				ctx.shadowBlur = 0;
+				ctx.shadowOffsetX = 0;
+				ctx.shadowOffsetY = 0;
+
+				// Draw right border
+				ctx.fillStyle = "cornflowerblue"; // Right border color
+				ctx.fillRect(b.x + brick.width - 2, b.y, 2, brick.height);
+
+				// Draw bottom border slightly darker than right border
+				ctx.fillStyle = "darkblue"; // Darker blue for bottom border
+				ctx.fillRect(b.x, b.y + brick.height - 2, brick.width, 2);
 			}
 		}
 	}
@@ -246,10 +322,10 @@ function draw() {
 	// Draw score
 	ctx.fillStyle = "yellow";
 	ctx.font = "20px Comic Sans MS";
-	ctx.shadowColor = "black"; // Shadow color
+	ctx.shadowColor = "red"; // Shadow color
 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
-	ctx.shadowBlur = 9; // Blur amount
+	ctx.shadowBlur = 4; // Blur amount
 	ctx.fillText("Score: " + SCORE, 10, 25);
 
 	// Draw level
@@ -258,17 +334,17 @@ function draw() {
 	ctx.shadowColor = "black"; // Shadow color
 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
-	ctx.shadowBlur = 9; // Blur amount
-	ctx.fillText("Level: " + LEVEL, 200, 25);
+	ctx.shadowBlur = 4; // Blur amount
+	ctx.fillText("Level: " + LEVEL, 160, 25);
 
-	// Draw level
+	// Draw lives
 	ctx.fillStyle = "lightgreen";
 	ctx.font = "20px Comic Sans MS";
 	ctx.shadowColor = "black"; // Shadow color
 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
-	ctx.shadowBlur = 9; // Blur amount
-	ctx.fillText("Lives: " + LIVES, 400, 25);
+	ctx.shadowBlur = 4; // Blur amount
+	ctx.fillText("Lives: " + LIVES, 310, 25);
 }
 
 // game over
@@ -277,19 +353,19 @@ function gameOver() {
 		//Game Over !!
 		ctx.font = "40px Comic Sans MS";
 		ctx.fillStyle = "red";
-		ctx.shadowColor = "black"; // Shadow color
-		ctx.shadowOffsetX = 2; // Horizontal shadow offset
-		ctx.shadowOffsetY = 2; // Vertical shadow offset
-		ctx.shadowBlur = 9; // Blur amount
-		ctx.fillText("GAME OVER !!", 110, 200);
+		ctx.shadowColor = "yellow"; // Shadow color
+		ctx.shadowOffsetX = 1; // Horizontal shadow offset
+		ctx.shadowOffsetY = 1; // Vertical shadow offset
+		ctx.shadowBlur = 2; // Blur amount
+		ctx.fillText("GAME OVER !!", 80, 200);
 		// Score
 		ctx.font = "30px Comic Sans MS";
 		ctx.fillStyle = "yellow";
-		ctx.shadowColor = "black"; // Shadow color
+		ctx.shadowColor = "red"; // Shadow color
 		ctx.shadowOffsetX = 2; // Horizontal shadow offset
 		ctx.shadowOffsetY = 2; // Vertical shadow offset
-		ctx.shadowBlur = 9; // Blur amount
-		ctx.fillText("Score: " + SCORE, 170, 250);
+		ctx.shadowBlur = 4; // Blur amount
+		ctx.fillText("Score: " + SCORE, 150, 250);
 		// Press restart
 		ctx.font = "20px Comic Sans MS";
 		ctx.fillStyle = "lightgreen";
@@ -297,7 +373,7 @@ function gameOver() {
 		ctx.shadowOffsetX = 2; // Horizontal shadow offset
 		ctx.shadowOffsetY = 2; // Vertical shadow offset
 		ctx.shadowBlur = 9; // Blur amount
-		ctx.fillText("Tap to 'RESTART'", 160, 290);
+		ctx.fillText("Tap to or press (SPACE)'RESTART'", 40, 290);
 
 		GAME_OVER = true;
 	}
@@ -330,11 +406,14 @@ function levelUp() {
 
 	if (isLevelDone) {
 		WIN.play();
-		brick.row++;
-		createBricks();
-		ball.speed += 0.5;
+		// Reset ball position
 		resetBall();
+		// Increase level
 		LEVEL++;
+		// Increase ball speed
+		ball.speed += 0.5;
+		// Create new bricks
+		createBricks();
 	}
 }
 
@@ -346,7 +425,6 @@ function update() {
 	ballPaddleCollision();
 	ballBrickCollision();
 	gameOver();
-	levelUp();
 }
 
 // GAME LOOP
@@ -358,5 +436,6 @@ function loop() {
 	ctx.clearRect(0, 0, cvs.width, cvs.height);
 	draw();
 	update();
+	levelUp(); // Call levelUp function here to check for level transition after all bricks are destroyed
 }
 loop();
