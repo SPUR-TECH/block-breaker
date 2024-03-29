@@ -161,15 +161,19 @@ function resetBall() {
 
 // BALL AND WALL COLLISION DETECTION
 function ballWallCollision() {
+	// Side walls
 	if (ball.x + ball.radius > cvs.width || ball.x - ball.radius < 0) {
 		ball.dx = -ball.dx;
 		WALL_HIT.play();
 	}
 
+	// Top wall
 	if (ball.y - ball.radius < 0) {
 		ball.dy = -ball.dy;
+		WALL_HIT.play();
 	}
 
+	// Bottom
 	if (ball.y + ball.radius > cvs.height) {
 		LIVES--; // LOSE LIFE
 		LIFE_LOST.play();
