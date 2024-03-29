@@ -381,6 +381,7 @@ function gameOver() {
 		createBricks();
 		LEVEL = 1;
 		brick.row = 3; // Reset the number of rows of bricks to 3
+		GAMEOVER.play();
 	}
 }
 
@@ -437,6 +438,7 @@ function update() {
 // GAME LOOP
 function loop() {
 	if (!GAME_OVER) {
+		BG_SOUND.play();
 		requestAnimationFrame(loop);
 	}
 	// CLEAR THE CANVAS
