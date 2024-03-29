@@ -12,7 +12,7 @@ const BALL_RADIUS = 6;
 const SCORE_UNIT = 10;
 const MAX_ROWS = 10;
 
-let LIVES = 3; // PLAYER HAS 3 LIVES
+let LIVES = 0; // PLAYER HAS 3 LIVES
 let SCORE = 0;
 let LEVEL = 1;
 let leftArrow = false;
@@ -78,6 +78,20 @@ cvs.addEventListener("touchstart", function (event) {
 cvs.addEventListener("touchend", function () {
 	leftArrow = false;
 	rightArrow = false;
+});
+
+document.getElementById("start-button").addEventListener("click", function () {
+	if (GAME_OVER) {
+		document.querySelector("#start-button").style.display = "block";
+		// Reset game variables
+		LIVES = 3;
+		SCORE = 0;
+		LEVEL = 1;
+		GAME_OVER = false;
+		createBricks();
+		resetBall();
+		loop(); // Start the game loop
+	}
 });
 
 document.addEventListener("keydown", function (event) {
@@ -354,6 +368,7 @@ function draw() {
 // game over
 function gameOver() {
 	if (LIVES <= 0) {
+		document.querySelector("#start-button").style.display = "block";
 		//Game Over !!
 		ctx.font = "40px Comic Sans MS";
 		ctx.fillStyle = "red";
@@ -361,7 +376,7 @@ function gameOver() {
 		ctx.shadowOffsetX = 1; // Horizontal shadow offset
 		ctx.shadowOffsetY = 1; // Vertical shadow offset
 		ctx.shadowBlur = 2; // Blur amount
-		ctx.fillText("GAME OVER !!", 80, 200);
+		ctx.fillText("GAME OVER !!", 70, 200);
 		// Score
 		ctx.font = "30px Comic Sans MS";
 		ctx.fillStyle = "yellow";
@@ -369,15 +384,10 @@ function gameOver() {
 		ctx.shadowOffsetX = 2; // Horizontal shadow offset
 		ctx.shadowOffsetY = 2; // Vertical shadow offset
 		ctx.shadowBlur = 4; // Blur amount
-		ctx.fillText("Score: " + SCORE, 140, 250);
+		ctx.fillText("Score: " + SCORE, 130, 250);
 		// Press restart
-		ctx.font = "15px Comic Sans MS";
-		ctx.fillStyle = "lightgreen";
+
 		ctx.shadowColor = "black"; // Shadow color
-		ctx.shadowOffsetX = 2; // Horizontal shadow offset
-		ctx.shadowOffsetY = 2; // Vertical shadow offset
-		ctx.shadowBlur = 9; // Blur amount
-		ctx.fillText("Press (SPACE) or (Tap) to 'RESTART'", 80, 290);
 
 		GAME_OVER = true;
 
@@ -443,6 +453,7 @@ function update() {
 // GAME LOOP
 function loop() {
 	if (!GAME_OVER) {
+		document.querySelector("#start-button").style.display = "none";
 		BG_SOUND.play();
 		requestAnimationFrame(loop);
 	}
