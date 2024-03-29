@@ -1,7 +1,7 @@
 /////// LOAD SOUNDS ////////
 
 const BG_SOUND = new Audio();
-BG_SOUND.src = "sounds/block-breaker-bg-sound.mp3";
+BG_SOUND.src = "sounds/block-breaker-bg2-sound.mp3";
 
 const BRICK_HIT = new Audio();
 BRICK_HIT.src = "sounds/block-breaker-block-sound.mp3";
@@ -19,4 +19,4 @@ const GAMEOVER = new Audio();
 GAMEOVER.src = "sounds/block-breaker-gameover-sound.mp3";
 
 const WIN = new Audio();
-WIN.src = "sounds/win.mp3";
+WIN.src = "sounds/block-breaker-level-sound.mp3";
