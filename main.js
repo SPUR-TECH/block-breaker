@@ -369,15 +369,15 @@ function gameOver() {
 		ctx.shadowOffsetX = 2; // Horizontal shadow offset
 		ctx.shadowOffsetY = 2; // Vertical shadow offset
 		ctx.shadowBlur = 4; // Blur amount
-		ctx.fillText("Score: " + SCORE, 150, 250);
+		ctx.fillText("Score: " + SCORE, 140, 250);
 		// Press restart
-		ctx.font = "20px Comic Sans MS";
+		ctx.font = "15px Comic Sans MS";
 		ctx.fillStyle = "lightgreen";
 		ctx.shadowColor = "black"; // Shadow color
 		ctx.shadowOffsetX = 2; // Horizontal shadow offset
 		ctx.shadowOffsetY = 2; // Vertical shadow offset
 		ctx.shadowBlur = 9; // Blur amount
-		ctx.fillText("Tap to or press (SPACE)'RESTART'", 40, 290);
+		ctx.fillText("Press (SPACE) or (Tap) to 'RESTART'", 80, 290);
 
 		GAME_OVER = true;
 
