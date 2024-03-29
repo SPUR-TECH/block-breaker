@@ -12,7 +12,7 @@ const BALL_RADIUS = 6;
 const SCORE_UNIT = 10;
 const MAX_ROWS = 10;
 
-let LIVES = 0; // PLAYER HAS 3 LIVES
+let LIVES = 3; // PLAYER HAS 3 LIVES
 let SCORE = 0;
 let LEVEL = 1;
 let leftArrow = false;
@@ -204,7 +204,7 @@ function ballPaddleCollision() {
 
 // CREATE THE BRICKS
 const brick = {
-	row: 2,
+	row: 3,
 	column: 7,
 	width: 50,
 	height: 10,
@@ -217,9 +217,10 @@ const brick = {
 let bricks = [];
 
 function createBricks() {
+	bricks = []; // Clear the bricks array
 	if (bricks.length === 0 || bricks.length < LEVEL + 1) {
 		// Add a new row of bricks only if there are no bricks or if the number of rows is less than LEVEL + 1
-		for (let r = 0; r < LEVEL + 1; r++) {
+		for (let r = 0; r < brick.row; r++) {
 			bricks[r] = [];
 			for (let c = 0; c < brick.column; c++) {
 				bricks[r][c] = {
@@ -232,7 +233,6 @@ function createBricks() {
 				};
 			}
 		}
-		brick.row = LEVEL + 1; // Update the number of rows for bricks
 	}
 }
 createBricks();
@@ -263,10 +263,10 @@ function drawBricks() {
 				ctx.fillRect(b.x, b.y, brick.width, brick.height);
 
 				// Reset shadow properties
-				ctx.shadowColor = "transparent";
-				ctx.shadowBlur = 0;
-				ctx.shadowOffsetX = 0;
-				ctx.shadowOffsetY = 0;
+				// ctx.shadowColor = "transparent";
+				// ctx.shadowBlur = 0;
+				// ctx.shadowOffsetX = 0;
+				// ctx.shadowOffsetY = 0;
 
 				// Draw right border
 				ctx.fillStyle = "cornflowerblue"; // Right border color
@@ -325,7 +325,7 @@ function draw() {
 	ctx.shadowColor = "red"; // Shadow color
 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
-	ctx.shadowBlur = 4; // Blur amount
+	ctx.shadowBlur = 3; // Blur amount
 	ctx.fillText("Score: " + SCORE, 10, 25);
 
 	// Draw level
@@ -376,6 +376,11 @@ function gameOver() {
 		ctx.fillText("Tap to or press (SPACE)'RESTART'", 40, 290);
 
 		GAME_OVER = true;
+
+		// Reset bricks
+		createBricks();
+		LEVEL = 1;
+		brick.row = 3; // Reset the number of rows of bricks to 3
 	}
 }
 
@@ -412,6 +417,8 @@ function levelUp() {
 		LEVEL++;
 		// Increase ball speed
 		ball.speed += 0.5;
+		// Increase the number of rows of bricks
+		brick.row++;
 		// Create new bricks
 		createBricks();
 	}
