@@ -20,10 +20,22 @@ let rightArrow = false;
 let GAME_OVER = false;
 let PAUSED = false;
 
+// function drawGameTitle() {
+// 	ctx.font = "35px Comic Sans MS";
+// 	ctx.fillStyle = "red";
+// 	ctx.shadowColor = "yellow"; // Shadow color
+// 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
+// 	ctx.shadowOffsetY = 2; // Vertical shadow offset
+// 	ctx.shadowBlur = 3; // Blur amount
+// 	ctx.fillText("BLOCK ~ BREAKER", 10, 250); // Adjust xPosition and yPosition as needed
+// 	ctx.shadowColor = "black"; // Shadow color
+// }
+
 function togglePause() {
 	PAUSED = !PAUSED;
 	if (PAUSED) {
 		BG_SOUND.pause(); // Pause background music
+		// drawGameTitle();
 	} else {
 		BG_SOUND.play(); // Resume background music
 		loop(); // Resume game loop
@@ -102,6 +114,8 @@ document.getElementById("start-button").addEventListener("click", function () {
 		createBricks();
 		resetBall();
 		loop(); // Start the game loop
+	} else {
+		togglePause(); // Toggle pause state
 	}
 });
 
@@ -110,21 +124,6 @@ document.addEventListener("keydown", function (event) {
 		togglePause();
 	}
 });
-
-// document.addEventListener("keydown", function (event) {
-// 	if (event.code === "Space") {
-// 		if (GAME_OVER) {
-// 			// Reset game variables
-// 			LIVES = 3;
-// 			SCORE = 0;
-// 			LEVEL = 1;
-// 			GAME_OVER = false;
-// 			createBricks();
-// 			resetBall();
-// 			loop(); // Restart the game loop
-// 		}
-// 	}
-// });
 
 document.addEventListener("keydown", function (event) {
 	if (event.code == "ArrowLeft") {
@@ -155,7 +154,7 @@ const ball = {
 	x: cvs.width / 2,
 	y: paddle.y - BALL_RADIUS,
 	radius: BALL_RADIUS,
-	speed: 4,
+	speed: 3,
 	dx: 3 * (Math.random() * 2 - 1),
 	dy: -3,
 };
@@ -240,12 +239,12 @@ function ballPaddleCollision() {
 // CREATE THE BRICKS
 const brick = {
 	row: 3,
-	column: 7,
+	column: 6,
 	width: 50,
 	height: 10,
 	offSetLeft: 6,
 	offSetTop: 8,
-	marginTop: 60,
+	marginTop: 70,
 	fillColor: "skyblue",
 };
 
@@ -361,7 +360,7 @@ function draw() {
 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
 	ctx.shadowBlur = 3; // Blur amount
-	ctx.fillText("Score: " + SCORE, 10, 25);
+	ctx.fillText("Score: " + SCORE, 10, 35);
 
 	// Draw level
 	ctx.fillStyle = "white";
@@ -370,7 +369,7 @@ function draw() {
 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
 	ctx.shadowBlur = 4; // Blur amount
-	ctx.fillText("Level: " + LEVEL, 160, 25);
+	ctx.fillText("Level: " + LEVEL, 150, 35);
 
 	// Draw lives
 	ctx.fillStyle = "lightgreen";
@@ -379,7 +378,7 @@ function draw() {
 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
 	ctx.shadowBlur = 4; // Blur amount
-	ctx.fillText("Lives: " + LIVES, 310, 25);
+	ctx.fillText("Lives: " + LIVES, 260, 35);
 }
 
 // game over
@@ -393,7 +392,7 @@ function gameOver() {
 		ctx.shadowOffsetX = 1; // Horizontal shadow offset
 		ctx.shadowOffsetY = 1; // Vertical shadow offset
 		ctx.shadowBlur = 2; // Blur amount
-		ctx.fillText("GAME OVER !!", 70, 200);
+		ctx.fillText("GAME OVER !!", 50, 250);
 		// Score
 		ctx.font = "30px Comic Sans MS";
 		ctx.fillStyle = "yellow";
@@ -401,7 +400,7 @@ function gameOver() {
 		ctx.shadowOffsetX = 2; // Horizontal shadow offset
 		ctx.shadowOffsetY = 2; // Vertical shadow offset
 		ctx.shadowBlur = 4; // Blur amount
-		ctx.fillText("Score: " + SCORE, 130, 250);
+		ctx.fillText("Score: " + SCORE, 100, 300);
 		// Press restart
 
 		ctx.shadowColor = "black"; // Shadow color
@@ -475,12 +474,14 @@ function loop() {
 		// CLEAR THE CANVAS
 		ctx.clearRect(0, 0, cvs.width, cvs.height);
 		draw();
+		// drawGameTitle();
 		if (!PAUSED) {
 			BG_SOUND.play();
 			update();
 			levelUp(); // Call levelUp function here to check for level transition after all bricks are destroyed
 		} else {
 			BG_SOUND.pause();
+			document.querySelector("#start-button").style.display = "block";
 		}
 	}
 }
