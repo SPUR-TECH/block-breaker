@@ -12,12 +12,23 @@ const BALL_RADIUS = 6;
 const SCORE_UNIT = 10;
 const MAX_ROWS = 10;
 
-let LIVES = 0; // PLAYER HAS 3 LIVES
+let LIVES = 3; // PLAYER HAS 3 LIVES
 let SCORE = 0;
 let LEVEL = 1;
 let leftArrow = false;
 let rightArrow = false;
 let GAME_OVER = false;
+let PAUSED = false;
+
+function togglePause() {
+	PAUSED = !PAUSED;
+	if (PAUSED) {
+		BG_SOUND.pause(); // Pause background music
+	} else {
+		BG_SOUND.play(); // Resume background music
+		loop(); // Resume game loop
+	}
+}
 
 // CREATE THE PADDLE
 const paddle = {
@@ -96,18 +107,24 @@ document.getElementById("start-button").addEventListener("click", function () {
 
 document.addEventListener("keydown", function (event) {
 	if (event.code === "Space") {
-		if (GAME_OVER) {
-			// Reset game variables
-			LIVES = 3;
-			SCORE = 0;
-			LEVEL = 1;
-			GAME_OVER = false;
-			createBricks();
-			resetBall();
-			loop(); // Restart the game loop
-		}
+		togglePause();
 	}
 });
+
+// document.addEventListener("keydown", function (event) {
+// 	if (event.code === "Space") {
+// 		if (GAME_OVER) {
+// 			// Reset game variables
+// 			LIVES = 3;
+// 			SCORE = 0;
+// 			LEVEL = 1;
+// 			GAME_OVER = false;
+// 			createBricks();
+// 			resetBall();
+// 			loop(); // Restart the game loop
+// 		}
+// 	}
+// });
 
 document.addEventListener("keydown", function (event) {
 	if (event.code == "ArrowLeft") {
@@ -454,13 +471,20 @@ function update() {
 function loop() {
 	if (!GAME_OVER) {
 		document.querySelector("#start-button").style.display = "none";
-		BG_SOUND.play();
 		requestAnimationFrame(loop);
+		// CLEAR THE CANVAS
+		ctx.clearRect(0, 0, cvs.width, cvs.height);
+		draw();
+		if (!PAUSED) {
+			BG_SOUND.play();
+			update();
+			levelUp(); // Call levelUp function here to check for level transition after all bricks are destroyed
+		} else {
+			BG_SOUND.pause();
+		}
 	}
-	// CLEAR THE CANVAS
-	ctx.clearRect(0, 0, cvs.width, cvs.height);
-	draw();
-	update();
-	levelUp(); // Call levelUp function here to check for level transition after all bricks are destroyed
 }
+
+// Initialize the game in a paused state
+PAUSED = true;
 loop();
