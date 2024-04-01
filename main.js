@@ -275,6 +275,7 @@ function createBricks() {
 }
 createBricks();
 
+// Variable to store the position of the randomly selected brick
 let greenBrickPosition = null;
 
 // draw the bricks
