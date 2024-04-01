@@ -19,6 +19,7 @@ let leftArrow = false;
 let rightArrow = false;
 let GAME_OVER = false;
 let PAUSED = false;
+let RUNNING = false;
 
 // function drawGameTitle() {
 // 	ctx.font = "35px Comic Sans MS";
@@ -38,7 +39,9 @@ function togglePause() {
 		// drawGameTitle();
 	} else {
 		BG_SOUND.play(); // Resume background music
-		loop(); // Resume game loop
+		if (!RUNNING) {
+			loop(); // Resume game loop only if it's not already running
+		}
 	}
 }
 
@@ -48,7 +51,7 @@ const paddle = {
 	y: cvs.height - PADDLE_MARGIN_BOTTOM - PADDLE_HEIGHT,
 	width: PADDLE_WIDTH,
 	height: PADDLE_HEIGHT,
-	dx: 5,
+	dx: 4,
 };
 
 // DRAW PADDLE
@@ -113,6 +116,7 @@ document.getElementById("start-button").addEventListener("click", function () {
 		GAME_OVER = false;
 		createBricks();
 		resetBall();
+		RUNNING = true; // Start the game loop
 		loop(); // Start the game loop
 	} else {
 		togglePause(); // Toggle pause state
@@ -417,18 +421,18 @@ function gameOver() {
 }
 
 // Touch start event listener for restarting the game
-cvs.addEventListener("touchstart", function () {
-	if (GAME_OVER) {
-		// Reset game variables
-		LIVES = 3;
-		SCORE = 0;
-		LEVEL = 1;
-		GAME_OVER = false;
-		createBricks();
-		resetBall();
-		loop(); // Restart the game loop
-	}
-});
+// cvs.addEventListener("touchstart", function () {
+// 	if (GAME_OVER) {
+// 		// Reset game variables
+// 		LIVES = 3;
+// 		SCORE = 0;
+// 		LEVEL = 1;
+// 		GAME_OVER = false;
+// 		createBricks();
+// 		resetBall();
+// 		loop(); // Restart the game loop
+// 	}
+// });
 
 // level up
 function levelUp() {
@@ -443,12 +447,12 @@ function levelUp() {
 
 	if (isLevelDone) {
 		WIN.play();
-		// Reset ball position
-		resetBall();
 		// Increase level
 		LEVEL++;
+		// Reset ball position
+		resetBall();
 		// Increase ball speed
-		ball.speed += 0.5;
+		ball.speed += 0.5; // Increase ball speed when level is cleared
 		// Increase the number of rows of bricks
 		brick.row++;
 		// Create new bricks
@@ -469,6 +473,7 @@ function update() {
 // GAME LOOP
 function loop() {
 	if (!GAME_OVER) {
+		RUNNING = true;
 		document.querySelector("#start-button").style.display = "none";
 		requestAnimationFrame(loop);
 		// CLEAR THE CANVAS
