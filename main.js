@@ -275,6 +275,8 @@ function createBricks() {
 }
 createBricks();
 
+let greenBrickPosition = null;
+
 // draw the bricks
 function drawBricks() {
 	for (let r = 0; r < brick.row; r++) {
@@ -282,6 +284,17 @@ function drawBricks() {
 			let b = bricks[r][c];
 			// if the brick isn't broken
 			if (b.status) {
+				// Set shadow color for the randomly selected brick
+				if (
+					greenBrickPosition &&
+					greenBrickPosition.row === r &&
+					greenBrickPosition.column === c
+				) {
+					ctx.shadowColor = "green"; // Set shadow color to green for the randomly selected brick
+				} else {
+					ctx.shadowColor = "red"; // Default shadow color
+				}
+
 				// Create linear gradient for brick (from top to bottom)
 				let brickGradient = ctx.createLinearGradient(
 					b.x,
@@ -294,17 +307,16 @@ function drawBricks() {
 				ctx.fillStyle = brickGradient;
 
 				// Draw brick with shadow
-				ctx.shadowColor = "red"; // Shadow color
 				ctx.shadowBlur = 4; // Blur amount
 				ctx.shadowOffsetX = 2; // Horizontal shadow offset
 				ctx.shadowOffsetY = 2; // Vertical shadow offset
 				ctx.fillRect(b.x, b.y, brick.width, brick.height);
 
 				// Reset shadow properties
-				// ctx.shadowColor = "transparent";
-				// ctx.shadowBlur = 0;
-				// ctx.shadowOffsetX = 0;
-				// ctx.shadowOffsetY = 0;
+				ctx.shadowColor = "transparent";
+				ctx.shadowBlur = 0;
+				ctx.shadowOffsetX = 0;
+				ctx.shadowOffsetY = 0;
 
 				// Draw right border
 				ctx.fillStyle = "cornflowerblue"; // Right border color
@@ -317,6 +329,16 @@ function drawBricks() {
 		}
 	}
 }
+
+// Function to randomly select a brick position
+function selectRandomBrickPosition() {
+	let row = Math.floor(Math.random() * brick.row);
+	let column = Math.floor(Math.random() * brick.column);
+	greenBrickPosition = { row, column };
+}
+
+// Call selectRandomBrickPosition() to choose a random brick position
+selectRandomBrickPosition();
 
 // ball brick collision
 function ballBrickCollision() {
