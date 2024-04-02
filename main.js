@@ -151,6 +151,31 @@ function movePaddle() {
 	} else if (leftArrow && paddle.x > 0) {
 		paddle.x -= paddle.dx;
 	}
+
+	// Check if the paddle collides with the green dot
+	if (
+		greenDotVisible &&
+		paddle.x < greenDotX + 5 &&
+		paddle.x + paddle.width > greenDotX - 5 &&
+		paddle.y < greenDotY + 5 &&
+		paddle.y + paddle.height > greenDotY - 5
+	) {
+		// Increase paddle width by 20%
+		let newPaddleWidth = paddle.width * 1.5;
+		// Ensure the paddle width does not exceed the canvas width
+		paddle.width = Math.min(newPaddleWidth, cvs.width - paddle.x);
+		greenDotVisible = false; // Hide the green dot after collision
+
+		// Set a timeout to reset the paddle width after 10 seconds
+		setTimeout(() => {
+			paddle.width = PADDLE_WIDTH; // Reset the paddle width
+		}, 10000); // 10 seconds in milliseconds
+	}
+
+	// Check if the green dot touches the bottom of the canvas
+	if (greenDotVisible && greenDotY + 5 >= cvs.height) {
+		greenDotVisible = false; // Hide the green dot
+	}
 }
 
 // CREATE THE BALL
@@ -223,26 +248,39 @@ function ballPaddleCollision() {
 		paddle.y < paddle.y + paddle.height &&
 		ball.y > paddle.y
 	) {
-		// PLAY SOUND
-		PADDLE_HIT.play();
+		if (
+			greenDotVisible &&
+			paddle.x < greenDotX &&
+			paddle.x + paddle.width > greenDotX &&
+			paddle.y < greenDotY &&
+			paddle.y + paddle.height > greenDotY
+		) {
+			// Increase paddle width by 10%
+			let newPaddleWidth = paddle.width * 1.5;
+			// Ensure the paddle width does not exceed the canvas width
+			paddle.width = Math.min(newPaddleWidth, cvs.width - paddle.x);
+		} else {
+			// PLAY SOUND
+			PADDLE_HIT.play();
 
-		// CHECK WHERE THE BALL HIT THE PADDLE
-		let collidePoint = ball.x - (paddle.x + paddle.width / 2);
+			// CHECK WHERE THE BALL HIT THE PADDLE
+			let collidePoint = ball.x - (paddle.x + paddle.width / 2);
 
-		// NORMALIZE THE VALUES
-		collidePoint = collidePoint / (paddle.width / 2);
+			// NORMALIZE THE VALUES
+			collidePoint = collidePoint / (paddle.width / 2);
 
-		// CALCULATE THE ANGLE OF THE BALL
-		let angle = (collidePoint * Math.PI) / 3;
+			// CALCULATE THE ANGLE OF THE BALL
+			let angle = (collidePoint * Math.PI) / 3;
 
-		ball.dx = ball.speed * Math.sin(angle);
-		ball.dy = -ball.speed * Math.cos(angle);
+			ball.dx = ball.speed * Math.sin(angle);
+			ball.dy = -ball.speed * Math.cos(angle);
+		}
 	}
 }
 
 // CREATE THE BRICKS
 const brick = {
-	row: 3,
+	row: 1,
 	column: 6,
 	width: 50,
 	height: 10,
@@ -278,14 +316,13 @@ createBricks();
 // Variable to store the position of the randomly selected brick
 let greenBrickPosition = null;
 
-// draw the bricks
+// DRAW BRICKS FUNCTION
 function drawBricks() {
 	for (let r = 0; r < brick.row; r++) {
 		for (let c = 0; c < brick.column; c++) {
 			let b = bricks[r][c];
 			// if the brick isn't broken
 			if (b.status) {
-				// Set shadow color for the randomly selected brick
 				if (
 					greenBrickPosition &&
 					greenBrickPosition.row === r &&
@@ -329,6 +366,15 @@ function drawBricks() {
 			}
 		}
 	}
+
+	// Draw a green dot if it's visible
+	if (greenDotVisible) {
+		ctx.beginPath();
+		ctx.fillStyle = "green";
+		ctx.arc(greenDotX, greenDotY, 5, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.closePath();
+	}
 }
 
 // Function to randomly select a brick position
@@ -340,6 +386,12 @@ function selectRandomBrickPosition() {
 
 // Call selectRandomBrickPosition() to choose a random brick position
 selectRandomBrickPosition();
+
+let greenDotX = 0; // Initial X position of the green dot
+let greenDotY = 0; // Initial Y position of the green dot
+let greenDotSpeed = 2; // Speed of the green dot movement
+let greenDotVisible = false; // Flag to indicate if the green dot should be visible
+let greenBrickHit = false;
 
 // ball brick collision
 function ballBrickCollision() {
@@ -354,12 +406,39 @@ function ballBrickCollision() {
 					ball.y + ball.radius > b.y &&
 					ball.y - ball.radius < b.y + brick.height
 				) {
+					if (
+						greenBrickPosition &&
+						greenBrickPosition.row === r &&
+						greenBrickPosition.column === c
+					) {
+						// If the ball hits the green shadow brick, set a flag to indicate it
+						greenBrickHit = true;
+						// Set the position of the green dot to the center of the brick
+						greenDotX = b.x + brick.width / 2;
+						greenDotY = b.y + brick.height / 2;
+						greenDotVisible = true; // Make the green dot visible
+					}
 					BRICK_HIT.play();
 					ball.dy = -ball.dy;
 					b.status = false; // the brick is broken
 					SCORE += SCORE_UNIT;
 				}
+				console.log("Green dot visible:", greenDotVisible);
+				console.log("Green dot position:", greenDotX, greenDotY);
 			}
+		}
+	}
+}
+
+// Function to move the green dot down the canvas
+function moveGreenDot() {
+	if (greenDotVisible) {
+		// Move the green dot down the canvas
+		greenDotY += greenDotSpeed;
+		// Check if the green dot is out of the canvas
+		if (greenDotY > cvs.height) {
+			// If the green dot is out of the canvas, reset its position
+			greenDotY = 0; // You can set it to any value you prefer
 		}
 	}
 }
@@ -406,6 +485,15 @@ function draw() {
 	ctx.shadowOffsetY = 2; // Vertical shadow offset
 	ctx.shadowBlur = 4; // Blur amount
 	ctx.fillText("Lives: " + LIVES, 260, 35);
+
+	// Draw green dot if it's visible
+	if (greenDotVisible) {
+		ctx.beginPath();
+		ctx.fillStyle = "green";
+		ctx.arc(greenDotX, greenDotY, 5, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.closePath();
+	}
 }
 
 // game over
@@ -490,6 +578,7 @@ function update() {
 	ballWallCollision();
 	ballPaddleCollision();
 	ballBrickCollision();
+	moveGreenDot();
 	gameOver();
 }
 
