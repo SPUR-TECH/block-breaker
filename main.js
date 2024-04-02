@@ -423,8 +423,6 @@ function ballBrickCollision() {
 					b.status = false; // the brick is broken
 					SCORE += SCORE_UNIT;
 				}
-				console.log("Green dot visible:", greenDotVisible);
-				console.log("Green dot position:", greenDotX, greenDotY);
 			}
 		}
 	}
