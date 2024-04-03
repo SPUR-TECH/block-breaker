@@ -318,6 +318,7 @@ createBricks();
 
 // Variable to store the position of the randomly selected brick
 let greenBrickPosition = null;
+let blueBrickPosition = null;
 
 // DRAW BRICKS FUNCTION
 function drawBricks() {
@@ -380,7 +381,7 @@ function drawBricks() {
 	}
 }
 
-// Function to randomly select a brick position
+// Function to select a random brick position for green shadow and dot
 function selectRandomBrickPosition() {
 	// Randomly choose a row and column within the available bricks
 	let row = Math.floor(Math.random() * brick.row);
@@ -391,6 +392,24 @@ function selectRandomBrickPosition() {
 		column = Math.floor(Math.random() * brick.column);
 	}
 	greenBrickPosition = { row, column };
+	// Select a different position for the blue shadow and dot
+	selectRandomBlueBrickPosition();
+}
+
+// Function to select a random brick position for blue shadow and dot
+function selectRandomBlueBrickPosition() {
+	// Randomly choose a row and column within the available bricks
+	let row = Math.floor(Math.random() * brick.row);
+	let column = Math.floor(Math.random() * brick.column);
+	// Check if the selected brick is already broken, if so, choose another position
+	while (
+		!bricks[row][column].status ||
+		(row === greenBrickPosition.row && column === greenBrickPosition.column)
+	) {
+		row = Math.floor(Math.random() * brick.row);
+		column = Math.floor(Math.random() * brick.column);
+	}
+	blueBrickPosition = { row, column };
 }
 
 // Call selectRandomBrickPosition() to choose a random brick position
@@ -401,6 +420,88 @@ let greenDotY = 0; // Initial Y position of the green dot
 let greenDotSpeed = 2; // Speed of the green dot movement
 let greenDotVisible = false; // Flag to indicate if the green dot should be visible
 let greenBrickHit = false;
+
+let blueDotX = 0; // Initial X position of the blue dot
+let blueDotY = 0; // Initial Y position of the blue dot
+let blueDotSpeed = 2; // Speed of the blue dot movement
+let blueDotVisible = false; // Flag to indicate if the blue dot should be visible
+let blueBrickHit = false;
+
+// DRAW BRICKS FUNCTION
+function drawBricks() {
+	for (let r = 0; r < brick.row; r++) {
+		for (let c = 0; c < brick.column; c++) {
+			let b = bricks[r][c];
+			// if the brick isn't broken
+			if (b.status) {
+				if (
+					greenBrickPosition &&
+					greenBrickPosition.row === r &&
+					greenBrickPosition.column === c
+				) {
+					ctx.shadowColor = "green"; // Set shadow color to green for the randomly selected brick
+				} else if (
+					blueBrickPosition &&
+					blueBrickPosition.row === r &&
+					blueBrickPosition.column === c
+				) {
+					ctx.shadowColor = "blue"; // Set shadow color to blue for the randomly selected brick
+				} else {
+					ctx.shadowColor = "red"; // Default shadow color
+				}
+
+				// Create linear gradient for brick (from top to bottom)
+				let brickGradient = ctx.createLinearGradient(
+					b.x,
+					b.y,
+					b.x,
+					b.y + brick.height,
+				);
+				brickGradient.addColorStop(0, "lightblue"); // Light blue at top
+				brickGradient.addColorStop(1, "blue"); // Dark blue at bottom
+				ctx.fillStyle = brickGradient;
+
+				// Draw brick with shadow
+				ctx.shadowBlur = 4; // Blur amount
+				ctx.shadowOffsetX = 2; // Horizontal shadow offset
+				ctx.shadowOffsetY = 2; // Vertical shadow offset
+				ctx.fillRect(b.x, b.y, brick.width, brick.height);
+
+				// Reset shadow properties
+				ctx.shadowColor = "transparent";
+				ctx.shadowBlur = 0;
+				ctx.shadowOffsetX = 0;
+				ctx.shadowOffsetY = 0;
+
+				// Draw right border
+				ctx.fillStyle = "cornflowerblue"; // Right border color
+				ctx.fillRect(b.x + brick.width - 2, b.y, 2, brick.height);
+
+				// Draw bottom border slightly darker than right border
+				ctx.fillStyle = "darkblue"; // Darker blue for bottom border
+				ctx.fillRect(b.x, b.y + brick.height - 2, brick.width, 2);
+			}
+		}
+	}
+
+	// Draw a green dot if it's visible
+	if (greenDotVisible) {
+		ctx.beginPath();
+		ctx.fillStyle = "green";
+		ctx.arc(greenDotX, greenDotY, 5, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.closePath();
+	}
+
+	// Draw a blue dot if it's visible
+	if (blueDotVisible) {
+		ctx.beginPath();
+		ctx.fillStyle = "blue";
+		ctx.arc(blueDotX, blueDotY, 5, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.closePath();
+	}
+}
 
 // ball brick collision
 function ballBrickCollision() {
@@ -426,6 +527,17 @@ function ballBrickCollision() {
 						greenDotX = b.x + brick.width / 2;
 						greenDotY = b.y + brick.height / 2;
 						greenDotVisible = true; // Make the green dot visible
+					} else if (
+						blueBrickPosition &&
+						blueBrickPosition.row === r &&
+						blueBrickPosition.column === c
+					) {
+						// If the ball hits the blue shadow brick, set a flag to indicate it
+						blueBrickHit = true;
+						// Set the position of the blue dot to the center of the brick
+						blueDotX = b.x + brick.width / 2;
+						blueDotY = b.y + brick.height / 2;
+						blueDotVisible = true; // Make the blue dot visible
 					}
 					BRICK_HIT.play();
 					ball.dy = -ball.dy;
@@ -446,6 +558,26 @@ function moveGreenDot() {
 		if (greenDotY > cvs.height) {
 			// If the green dot is out of the canvas, reset its position
 			greenDotY = 0; // You can set it to any value you prefer
+		}
+	}
+}
+
+// Function to move the blue dot down the canvas
+function moveBlueDot() {
+	if (blueDotVisible) {
+		// Move the blue dot down the canvas
+		blueDotY += blueDotSpeed;
+		// Check if the blue dot hits the paddle
+		if (
+			blueDotY + 5 >= paddle.y && // Check if the bottom of the blue dot hits the top of the paddle
+			blueDotX >= paddle.x && // Check if the blue dot is horizontally aligned with the paddle
+			blueDotX <= paddle.x + paddle.width // Check if the blue dot is horizontally aligned with the paddle
+		) {
+			blueDotVisible = false; // Hide the blue dot
+		}
+		// Check if the blue dot is out of the canvas
+		if (blueDotY > cvs.height) {
+			blueDotVisible = false; // Hide the blue dot
 		}
 	}
 }
@@ -621,6 +753,7 @@ function update() {
 	ballPaddleCollision();
 	ballBrickCollision();
 	moveGreenDot();
+	moveBlueDot();
 	gameOver();
 }
 
