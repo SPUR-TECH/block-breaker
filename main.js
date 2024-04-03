@@ -198,7 +198,7 @@ function drawBall() {
 		ball.y + ball.radius,
 	);
 	ballGradient.addColorStop(0.4, "white"); // White
-	ballGradient.addColorStop(1, "#424242"); // Darker grey
+	ballGradient.addColorStop(1, "#424242"); // Dark grey
 	ctx.fillStyle = ballGradient;
 	ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
 	ctx.fill();
@@ -216,6 +216,9 @@ function resetBall() {
 	ball.y = paddle.y - BALL_RADIUS;
 	ball.dx = 3 * (Math.random() * 2 - 1);
 	ball.dy = -3;
+	if (GAME_OVER) {
+		ball.speed = 3; // Reset ball speed only if game over
+	}
 }
 
 // BALL AND WALL COLLISION DETECTION
@@ -554,6 +557,9 @@ function gameOver() {
 		ctx.shadowColor = "black"; // Shadow color
 
 		GAME_OVER = true;
+
+		// Reset ball speed
+		ball.speed = 3;
 
 		// Reset bricks
 		createBricks();
