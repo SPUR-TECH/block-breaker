@@ -379,8 +379,14 @@ function drawBricks() {
 
 // Function to randomly select a brick position
 function selectRandomBrickPosition() {
+	// Randomly choose a row and column within the available bricks
 	let row = Math.floor(Math.random() * brick.row);
 	let column = Math.floor(Math.random() * brick.column);
+	// Check if the selected brick is already broken, if so, choose another position
+	while (!bricks[row][column].status) {
+		row = Math.floor(Math.random() * brick.row);
+		column = Math.floor(Math.random() * brick.column);
+	}
 	greenBrickPosition = { row, column };
 }
 
@@ -572,7 +578,7 @@ function gameOver() {
 // 	}
 // });
 
-// level up
+// Level up function
 function levelUp() {
 	let isLevelDone = true;
 
@@ -595,6 +601,9 @@ function levelUp() {
 		brick.row++;
 		// Create new bricks
 		createBricks();
+
+		// Re-randomize the green brick position
+		selectRandomBrickPosition();
 	}
 }
 
