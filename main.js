@@ -161,14 +161,23 @@ function movePaddle() {
 		paddle.y + paddle.height > greenDotY - 5
 	) {
 		// Increase paddle width by 20%
-		let newPaddleWidth = paddle.width * 1.5;
-		// Ensure the paddle width does not exceed the canvas width
-		paddle.width = Math.min(newPaddleWidth, cvs.width - paddle.x);
+		let paddleGrowth = paddle.width * 0.25; // 25% increase
+		let newPaddleWidth = paddle.width + paddleGrowth;
+		let paddleShift = paddleGrowth / 2; // Shift paddle to the left by half of the growth
+
+		// Adjust paddle position to the left by the amount it grows
+		paddle.x -= paddleShift;
+
+		// Update paddle width
+		paddle.width = newPaddleWidth;
+
 		greenDotVisible = false; // Hide the green dot after collision
 
 		// Set a timeout to reset the paddle width after 10 seconds
 		setTimeout(() => {
-			paddle.width = PADDLE_WIDTH; // Reset the paddle width
+			// Reset paddle width and position
+			paddle.width = PADDLE_WIDTH;
+			paddle.x += paddleShift;
 		}, 10000); // 10 seconds in milliseconds
 	}
 
