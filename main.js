@@ -64,7 +64,7 @@ function drawPaddle() {
 		paddle.y + paddle.height,
 	);
 	paddleGradient.addColorStop(0, "lightgreen");
-	paddleGradient.addColorStop(1, "darkgreen");
+	paddleGradient.addColorStop(1, "black");
 	ctx.fillStyle = paddleGradient;
 	let radius = paddle.height / 2; // Radius for rounded corners
 	ctx.beginPath();
@@ -460,37 +460,66 @@ function draw() {
 	// Draw score
 	ctx.fillStyle = "yellow";
 	ctx.font = "20px Comic Sans MS";
-	ctx.shadowColor = "red"; // Shadow color
-	ctx.shadowOffsetX = 2; // Horizontal shadow offset
-	ctx.shadowOffsetY = 2; // Vertical shadow offset
-	ctx.shadowBlur = 3; // Blur amount
 	ctx.fillText("Score: " + SCORE, 10, 35);
 
 	// Draw level
 	ctx.fillStyle = "white";
 	ctx.font = "20px Comic Sans MS";
-	ctx.shadowColor = "black"; // Shadow color
-	ctx.shadowOffsetX = 2; // Horizontal shadow offset
-	ctx.shadowOffsetY = 2; // Vertical shadow offset
-	ctx.shadowBlur = 4; // Blur amount
 	ctx.fillText("Level: " + LEVEL, 150, 35);
 
 	// Draw lives
 	ctx.fillStyle = "lightgreen";
 	ctx.font = "20px Comic Sans MS";
-	ctx.shadowColor = "black"; // Shadow color
-	ctx.shadowOffsetX = 2; // Horizontal shadow offset
-	ctx.shadowOffsetY = 2; // Vertical shadow offset
-	ctx.shadowBlur = 4; // Blur amount
 	ctx.fillText("Lives: " + LIVES, 260, 35);
 
 	// Draw green dot if it's visible
 	if (greenDotVisible) {
+		// Create linear gradient for green dot (from top to bottom)
+		let greenDotGradient = ctx.createLinearGradient(
+			greenDotX,
+			greenDotY - 15,
+			greenDotX,
+			greenDotY + 15,
+		);
+		greenDotGradient.addColorStop(0, "white"); // Light green at top
+		greenDotGradient.addColorStop(0.4, "lightgreen"); // Middle
+		greenDotGradient.addColorStop(0.7, "black"); // Dark green at bottom
+		ctx.fillStyle = greenDotGradient;
+
+		// Draw green dot with rounded corners
+		let radius = 5;
 		ctx.beginPath();
-		ctx.fillStyle = "green";
-		ctx.arc(greenDotX, greenDotY, 5, 0, Math.PI * 2);
-		ctx.fill();
+		ctx.moveTo(greenDotX - 15 + radius, greenDotY - 5);
+		ctx.arcTo(
+			greenDotX + 15,
+			greenDotY - 5,
+			greenDotX + 15,
+			greenDotY + 5,
+			radius,
+		);
+		ctx.arcTo(
+			greenDotX + 15,
+			greenDotY + 5,
+			greenDotX - 15,
+			greenDotY + 5,
+			radius,
+		);
+		ctx.arcTo(
+			greenDotX - 15,
+			greenDotY + 5,
+			greenDotX - 15,
+			greenDotY - 5,
+			radius,
+		);
+		ctx.arcTo(
+			greenDotX - 15,
+			greenDotY - 5,
+			greenDotX + 15,
+			greenDotY - 5,
+			radius,
+		);
 		ctx.closePath();
+		ctx.fill();
 	}
 }
 
