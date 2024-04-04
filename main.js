@@ -511,12 +511,12 @@ function drawBricks() {
 		ctx.beginPath();
 		ctx.moveTo(blueDotX - 20, blueDotY); // Start from left
 		ctx.lineTo(blueDotX + 20, blueDotY); // End at right
-		ctx.lineWidth = 4; // Set line width to 8
+		ctx.lineWidth = 4; // Set line width to 4
 
-		// Set the shadow color to a semi-transparent darker blue
-		ctx.shadowColor = "rgba(0, 0, 255, 0.8)";
+		// Set the shadow color to a semi-transparent light blue
+		ctx.shadowColor = "rgba(0, 150, 255, 0.98)";
 		ctx.shadowBlur = 10; // Set blur amount for the shadow
-		ctx.strokeStyle = "blue"; // Set stroke color to blue
+		ctx.strokeStyle = "blue"; // Set stroke color to black
 		ctx.stroke();
 		ctx.closePath();
 
