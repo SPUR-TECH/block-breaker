@@ -250,6 +250,19 @@ function ballWallCollision() {
 		LIFE_LOST.play();
 		resetBall();
 	}
+
+	// Check for collision with blue wall if it's visible
+	if (blueWallVisible) {
+		// Check if the ball hits the blue wall from below
+		if (
+			ball.y + ball.radius > cvs.height - 10 && // Check if the bottom of the ball hits the top of the blue wall
+			ball.x > 0 && // Check if the ball is within the left boundary of the canvas
+			ball.x < cvs.width // Check if the ball is within the right boundary of the canvas
+		) {
+			ball.dy = -ball.dy; // Reverse the y-direction of the ball
+			WALL_HIT.play(); // Play the wall hit sound
+		}
+	}
 }
 
 // BALL AND PADDLE COLLISION
