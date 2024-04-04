@@ -21,17 +21,6 @@ let GAME_OVER = false;
 let PAUSED = false;
 let RUNNING = false;
 
-// function drawGameTitle() {
-// 	ctx.font = "35px Comic Sans MS";
-// 	ctx.fillStyle = "red";
-// 	ctx.shadowColor = "yellow"; // Shadow color
-// 	ctx.shadowOffsetX = 2; // Horizontal shadow offset
-// 	ctx.shadowOffsetY = 2; // Vertical shadow offset
-// 	ctx.shadowBlur = 3; // Blur amount
-// 	ctx.fillText("BLOCK ~ BREAKER", 10, 250); // Adjust xPosition and yPosition as needed
-// 	ctx.shadowColor = "black"; // Shadow color
-// }
-
 function togglePause() {
 	PAUSED = !PAUSED;
 	if (PAUSED) {
@@ -578,17 +567,18 @@ function drawBlueWall() {
 		0,
 		cvs.height,
 	);
-	blueWallGradient.addColorStop(0, "blue"); // Dark blue at top
-	blueWallGradient.addColorStop(1, "darkblue"); // Even darker blue at bottom
+
+	blueWallGradient.addColorStop(0, "rgba(0, 0, 255, 0.6)"); // Dark blue at top with 50% opacity
+	blueWallGradient.addColorStop(1, "rgba(0, 0, 139, 0.4)"); // Even darker blue at bottom with 80% opacity
 
 	// Set blue wall fill style to the gradient
 	ctx.fillStyle = blueWallGradient;
 
 	// Apply shadow effect to the blue wall
 	ctx.shadowColor = "rgba(0, 0, 255, 0.98)"; // Blue shadow color
-	ctx.shadowBlur = 15; // Blur amount for the shadow
+	ctx.shadowBlur = 10; // Blur amount for the shadow
 	ctx.shadowOffsetX = 0; // Horizontal offset for the shadow
-	ctx.shadowOffsetY = 0; // Vertical offset for the shadow
+	ctx.shadowOffsetY = -2; // Vertical offset for the shadow
 
 	// Draw the blue wall as a filled rectangle
 	ctx.fillRect(0, cvs.height - 10, cvs.width, 10);
