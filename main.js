@@ -6,7 +6,7 @@ const ctx = cvs.getContext("2d");
 
 // GAME VARIABLES AND CONSTANTS
 const PADDLE_WIDTH = 80;
-const PADDLE_MARGIN_BOTTOM = 5;
+const PADDLE_MARGIN_BOTTOM = 15;
 const PADDLE_HEIGHT = 10;
 const BALL_RADIUS = 6;
 const SCORE_UNIT = 10;
@@ -329,67 +329,6 @@ createBricks();
 let greenBrickPosition = null;
 let blueBrickPosition = null;
 
-// DRAW BRICKS FUNCTION
-function drawBricks() {
-	for (let r = 0; r < brick.row; r++) {
-		for (let c = 0; c < brick.column; c++) {
-			let b = bricks[r][c];
-			// if the brick isn't broken
-			if (b.status) {
-				if (
-					greenBrickPosition &&
-					greenBrickPosition.row === r &&
-					greenBrickPosition.column === c
-				) {
-					ctx.shadowColor = "green"; // Set shadow color to green for the randomly selected brick
-				} else {
-					ctx.shadowColor = "red"; // Default shadow color
-				}
-
-				// Create linear gradient for brick (from top to bottom)
-				let brickGradient = ctx.createLinearGradient(
-					b.x,
-					b.y,
-					b.x,
-					b.y + brick.height,
-				);
-				brickGradient.addColorStop(0, "lightblue"); // Light blue at top
-				brickGradient.addColorStop(1, "blue"); // Dark blue at bottom
-				ctx.fillStyle = brickGradient;
-
-				// Draw brick with shadow
-				ctx.shadowBlur = 4; // Blur amount
-				ctx.shadowOffsetX = 2; // Horizontal shadow offset
-				ctx.shadowOffsetY = 2; // Vertical shadow offset
-				ctx.fillRect(b.x, b.y, brick.width, brick.height);
-
-				// Reset shadow properties
-				ctx.shadowColor = "transparent";
-				ctx.shadowBlur = 0;
-				ctx.shadowOffsetX = 0;
-				ctx.shadowOffsetY = 0;
-
-				// Draw right border
-				ctx.fillStyle = "cornflowerblue"; // Right border color
-				ctx.fillRect(b.x + brick.width - 2, b.y, 2, brick.height);
-
-				// Draw bottom border slightly darker than right border
-				ctx.fillStyle = "darkblue"; // Darker blue for bottom border
-				ctx.fillRect(b.x, b.y + brick.height - 2, brick.width, 2);
-			}
-		}
-	}
-
-	// Draw a green dot if it's visible
-	if (greenDotVisible) {
-		ctx.beginPath();
-		ctx.fillStyle = "green";
-		ctx.arc(greenDotX, greenDotY, 5, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.closePath();
-	}
-}
-
 // Function to select a random brick position for green shadow and dot
 function selectRandomBrickPosition() {
 	// Randomly choose a row and column within the available bricks
@@ -584,6 +523,11 @@ function moveGreenDot() {
 	}
 }
 
+// Function to reset blue wall visibility after 10 seconds
+function resetBlueWallVisibility() {
+	blueWallVisible = false;
+}
+
 // Function to move the blue dot down the canvas
 function moveBlueDot() {
 	if (blueDotVisible) {
@@ -596,6 +540,10 @@ function moveBlueDot() {
 			blueDotX <= paddle.x + paddle.width // Check if the blue dot is horizontally aligned with the paddle
 		) {
 			blueDotVisible = false; // Hide the blue dot
+			blueWallVisible = true; // Set flag to show blue wall
+			console.log("Blue dot hit the paddle!"); // Log message when blue dot hits the paddle
+			// Reset blue wall visibility after 10 seconds
+			setTimeout(resetBlueWallVisibility, 10000);
 		}
 		// Check if the blue dot is out of the canvas
 		if (blueDotY > cvs.height) {
@@ -604,15 +552,35 @@ function moveBlueDot() {
 	}
 }
 
-// show game stats
-function showGameStats(text, textX, textY, img, imgX, imgY) {
-	// draw text
-	ctx.fillStyle = "white";
-	ctx.font = "25px Comic Sans MS";
-	ctx.fillText(text, textX, textY);
+let blueWallVisible = false;
 
-	// draw image
-	ctx.drawImage(img, imgX, imgY, 25, 25);
+// Function to draw the blue wall with shadow
+function drawBlueWall() {
+	ctx.save(); // Save the current canvas state
+
+	// Create linear gradient for blue wall (from top to bottom)
+	let blueWallGradient = ctx.createLinearGradient(
+		0,
+		cvs.height - 10,
+		0,
+		cvs.height,
+	);
+	blueWallGradient.addColorStop(0, "blue"); // Dark blue at top
+	blueWallGradient.addColorStop(1, "darkblue"); // Even darker blue at bottom
+
+	// Set blue wall fill style to the gradient
+	ctx.fillStyle = blueWallGradient;
+
+	// Apply shadow effect to the blue wall
+	ctx.shadowColor = "rgba(0, 0, 255, 0.98)"; // Blue shadow color
+	ctx.shadowBlur = 15; // Blur amount for the shadow
+	ctx.shadowOffsetX = 0; // Horizontal offset for the shadow
+	ctx.shadowOffsetY = 0; // Vertical offset for the shadow
+
+	// Draw the blue wall as a filled rectangle
+	ctx.fillRect(0, cvs.height - 10, cvs.width, 10);
+
+	ctx.restore(); // Restore the canvas state to remove the shadow effect
 }
 
 // DRAW FUNCTION
@@ -620,6 +588,10 @@ function draw() {
 	drawPaddle();
 	drawBall();
 	drawBricks();
+	// Draw blue wall if the flag is true
+	if (blueWallVisible) {
+		drawBlueWall();
+	}
 	// Draw score
 	ctx.fillStyle = "yellow";
 	ctx.font = "20px Comic Sans MS";
