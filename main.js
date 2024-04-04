@@ -292,8 +292,8 @@ function ballPaddleCollision() {
 
 // CREATE THE BRICKS
 const brick = {
-	row: 3,
-	column: 6,
+	row: 1,
+	column: 2,
 	width: 50,
 	height: 10,
 	offSetLeft: 6,
@@ -502,13 +502,26 @@ function drawBricks() {
 		ctx.closePath();
 	}
 
-	// Draw a blue dot if it's visible
+	// Draw a blue dot as a line with a more prominent shadow if it's visible
 	if (blueDotVisible) {
+		// Save the current state of the canvas
+		ctx.save();
+
+		// Draw a blue shadow around the blue dot line
 		ctx.beginPath();
-		ctx.fillStyle = "blue";
-		ctx.arc(blueDotX, blueDotY, 5, 0, Math.PI * 2);
-		ctx.fill();
+		ctx.moveTo(blueDotX - 20, blueDotY); // Start from left
+		ctx.lineTo(blueDotX + 20, blueDotY); // End at right
+		ctx.lineWidth = 4; // Set line width to 8
+
+		// Set the shadow color to a semi-transparent darker blue
+		ctx.shadowColor = "rgba(0, 0, 255, 0.8)";
+		ctx.shadowBlur = 10; // Set blur amount for the shadow
+		ctx.strokeStyle = "blue"; // Set stroke color to blue
+		ctx.stroke();
 		ctx.closePath();
+
+		// Restore the canvas to its previous state
+		ctx.restore();
 	}
 }
 
