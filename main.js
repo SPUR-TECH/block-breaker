@@ -330,6 +330,7 @@ createBricks();
 // Variable to store the position of the randomly selected brick
 let greenBrickPosition = null;
 let blueBrickPosition = null;
+let orangeBrickPosition = null;
 
 // Function to select a random brick position for green shadow and dot
 function selectRandomBrickPosition() {
@@ -362,20 +363,43 @@ function selectRandomBlueBrickPosition() {
 	blueBrickPosition = { row, column };
 }
 
+// Function to select a random brick position for orange shadow and dot
+function selectRandomOrangeBrickPosition() {
+	// Randomly choose a row and column within the available bricks
+	let row = Math.floor(Math.random() * brick.row);
+	let column = Math.floor(Math.random() * brick.column);
+	// Check if the selected brick is already broken, if so, choose another position
+	while (
+		!bricks[row][column].status ||
+		(row === greenBrickPosition.row && column === greenBrickPosition.column) ||
+		(row === blueBrickPosition.row && column === blueBrickPosition.column)
+	) {
+		row = Math.floor(Math.random() * brick.row);
+		column = Math.floor(Math.random() * brick.column);
+	}
+	orangeBrickPosition = { row, column };
+}
+
 // Call selectRandomBrickPosition() to choose a random brick position
 selectRandomBrickPosition();
 
 let greenDotX = 0; // Initial X position of the green dot
 let greenDotY = 0; // Initial Y position of the green dot
-let greenDotSpeed = 2; // Speed of the green dot movement
+let greenDotSpeed = 1; // Speed of the green dot movement
 let greenDotVisible = false; // Flag to indicate if the green dot should be visible
 let greenBrickHit = false;
 
 let blueDotX = 0; // Initial X position of the blue dot
 let blueDotY = 0; // Initial Y position of the blue dot
-let blueDotSpeed = 2; // Speed of the blue dot movement
+let blueDotSpeed = 1; // Speed of the blue dot movement
 let blueDotVisible = false; // Flag to indicate if the blue dot should be visible
 let blueBrickHit = false;
+
+let orangeDotX = 0; // Initial X position of the orange dot
+let orangeDotY = 0; // Initial Y position of the orange dot
+let orangeDotSpeed = 1; // Speed of the orange dot movement
+let orangeDotVisible = false; // Flag to indicate if the orange dot should be visible
+let orangeBrickHit = false;
 
 // DRAW BRICKS FUNCTION
 function drawBricks() {
@@ -396,6 +420,12 @@ function drawBricks() {
 					blueBrickPosition.column === c
 				) {
 					ctx.shadowColor = "blue"; // Set shadow color to blue for the randomly selected brick
+				} else if (
+					orangeBrickPosition &&
+					orangeBrickPosition.row === r &&
+					orangeBrickPosition.column === c
+				) {
+					ctx.shadowColor = "orange"; // Set shadow color to orange for the randomly selected brick
 				} else {
 					ctx.shadowColor = "red"; // Default shadow color
 				}
@@ -466,6 +496,32 @@ function drawBricks() {
 	}
 }
 
+// Function to move the orange dot down the canvas
+function moveOrangeDot() {
+	if (orangeDotVisible) {
+		// Move the orange dot down the canvas
+		orangeDotY += orangeDotSpeed;
+		// Check if the orange dot is out of the canvas
+		if (orangeDotY > cvs.height) {
+			orangeDotVisible = false; // Hide the orange dot
+		}
+	}
+}
+
+// Function to draw the orange dot
+function drawOrangeDot() {
+	if (orangeDotVisible) {
+		// Draw the orange dot
+		ctx.beginPath();
+		ctx.fillStyle = "orange";
+		ctx.arc(orangeDotX, orangeDotY, 5, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.closePath();
+	}
+}
+
+selectRandomOrangeBrickPosition();
+
 // ball brick collision
 function ballBrickCollision() {
 	for (let r = 0; r < brick.row; r++) {
@@ -501,6 +557,17 @@ function ballBrickCollision() {
 						blueDotX = b.x + brick.width / 2;
 						blueDotY = b.y + brick.height / 2;
 						blueDotVisible = true; // Make the blue dot visible
+					} else if (
+						orangeBrickPosition &&
+						orangeBrickPosition.row === r &&
+						orangeBrickPosition.column === c
+					) {
+						// If the ball hits the orange shadow brick, set a flag to indicate it
+						orangeBrickHit = true;
+						// Set the position of the orange dot to the center of the brick
+						orangeDotX = b.x + brick.width / 2;
+						orangeDotY = b.y + brick.height / 2;
+						orangeDotVisible = true; // Make the orange dot visible
 					}
 					BRICK_HIT.play();
 					ball.dy = -ball.dy;
@@ -591,10 +658,13 @@ function draw() {
 	drawPaddle();
 	drawBall();
 	drawBricks();
+	drawOrangeDot();
+
 	// Draw blue wall if the flag is true
 	if (blueWallVisible) {
 		drawBlueWall();
 	}
+
 	// Draw score
 	ctx.fillStyle = "yellow";
 	ctx.font = "20px Comic Sans MS";
@@ -751,6 +821,7 @@ function update() {
 	ballBrickCollision();
 	moveGreenDot();
 	moveBlueDot();
+	moveOrangeDot();
 	gameOver();
 }
 
