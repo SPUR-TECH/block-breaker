@@ -12,8 +12,8 @@ const MAX_ROWS = 10;
 
 // CREATE THE BRICKS
 const brick = {
-	row: 1,
-	column: 3,
+	row: 3,
+	column: 6,
 	width: 50,
 	height: 10,
 	offSetLeft: 6,
@@ -61,6 +61,8 @@ let blueDotY = 0; // Initial Y position of the blue dot
 let blueDotSpeed = 1; // Speed of the blue dot movement
 let blueDotVisible = false; // Flag to indicate if the blue dot should be visible
 let blueBrickHit = false;
+
+let blueWallVisible = false;
 
 let orangeDotX = 0; // Initial X position of the orange dot
 let orangeDotY = 0; // Initial Y position of the orange dot
@@ -496,7 +498,16 @@ function drawBricks() {
 	}
 }
 
-// Function to move the orange dot down the canvas
+// Variable to keep track of the projectile creation interval
+let projectileInterval = null;
+
+// Function to handle the creation of projectiles
+function handleProjectileCreation() {
+	// Create projectiles
+	createOrangeProjectiles();
+}
+
+// Move the orange dot function remains the same
 function moveOrangeDot() {
 	if (orangeDotVisible) {
 		// Move the orange dot down the canvas
@@ -508,11 +519,16 @@ function moveOrangeDot() {
 			orangeDotX >= paddle.x && // Check if the orange dot is horizontally aligned with the paddle
 			orangeDotX <= paddle.x + paddle.width // Check if the orange dot is horizontally aligned with the paddle
 		) {
-			// Call the function to create orange projectiles
-			createOrangeProjectiles();
+			handleProjectileCreation(); // Call the function to handle projectile creation
+			orangeDotVisible = false; // Hide the orange dot
 
-			// Hide the orange dot
-			orangeDotVisible = false;
+			// Set an interval to continue creating projectiles every second for 10 seconds
+			projectileInterval = setInterval(handleProjectileCreation, 500);
+
+			// Set a timer to clear the projectile interval after 10 seconds
+			setTimeout(() => {
+				clearInterval(projectileInterval);
+			}, 10000);
 		}
 
 		// Check if the orange dot is out of the canvas
@@ -547,40 +563,24 @@ function drawOrangeDot() {
 
 selectRandomOrangeBrickPosition();
 
-// Function to draw vertical lines when the orange dot hits the paddle
-// function drawVerticalLines() {
-// 	// Draw the vertical lines only if the orange dot is visible
-// 	if (orangeDotVisible) {
-// 		// Set line color to orange
-// 		ctx.strokeStyle = "orange";
-// 		ctx.lineWidth = 3; // Set line width
-
-// 		// Draw the left vertical line
-// 		ctx.beginPath();
-// 		ctx.moveTo(paddle.x, paddle.y);
-// 		ctx.lineTo(paddle.x, paddle.y - 10); // Adjust the length as needed
-// 		ctx.stroke();
-// 		ctx.closePath();
-
-// 		// Draw the right vertical line
-// 		ctx.beginPath();
-// 		ctx.moveTo(paddle.x + paddle.width, paddle.y);
-// 		ctx.lineTo(paddle.x + paddle.width, paddle.y - 10); // Adjust the length as needed
-// 		ctx.stroke();
-// 		ctx.closePath();
-// 	}
-// }
-
-/// Function to create orange projectiles
 function createOrangeProjectiles() {
-	// Calculate initial x position for the projectile
-	let x = paddle.x + paddle.width / 2; // Set x to the middle of the paddle
+	// Calculate initial x position for the projectiles
+	let x1 = paddle.x; // Set x1 to the left end of the paddle
+	let x2 = paddle.x + paddle.width; // Set x2 to the right end of the paddle
+
+	// Calculate initial y position for the projectiles
 	let y = paddle.y - 10; // Adjust the initial y position as needed
-	let width = 5; // Adjust width as needed
-	let height = 10; // Adjust height as needed
+
+	// Calculate velocity for the projectiles
 	let velocityY = -5; // Adjust vertical velocity as needed
-	let projectile = { x, y, width, height, velocityY };
-	orangeProjectiles.push(projectile);
+
+	// Create projectiles for both ends
+	let projectile1 = { x: x1, y, width: 5, height: 10, velocityY };
+	let projectile2 = { x: x2, y, width: 5, height: 10, velocityY };
+
+	// Add projectiles to the array
+	orangeProjectiles.push(projectile1, projectile2);
+	PROJECTILES.play();
 }
 
 // Function to move orange projectiles
@@ -594,6 +594,13 @@ function moveOrangeProjectiles() {
 			// Remove the projectile from the array
 			orangeProjectiles.splice(i, 1);
 			i--; // Decrement i to adjust for the removed element
+		} else {
+			// Check if the projectile hits a brick
+			if (orangeProjectileHitsBrick(orangeProjectiles[i])) {
+				// If a hit occurs, remove the projectile from the array
+				orangeProjectiles.splice(i, 1);
+				i--; // Decrement i to adjust for the removed element
+			}
 		}
 	}
 }
@@ -611,6 +618,7 @@ function drawOrangeProjectiles() {
 		);
 	}
 }
+
 // Function to check if an orange projectile hits a brick
 function orangeProjectileHitsBrick(projectile) {
 	for (let r = 0; r < brick.row; r++) {
@@ -623,6 +631,7 @@ function orangeProjectileHitsBrick(projectile) {
 					projectile.y + projectile.height > b.y &&
 					projectile.y < b.y + brick.height
 				) {
+					BRICK_HIT.play();
 					// If the projectile hits a brick, set the brick status to false (broken)
 					b.status = false;
 					return true; // Return true to indicate a hit
@@ -732,8 +741,6 @@ function moveBlueDot() {
 	}
 }
 
-let blueWallVisible = false;
-
 // Function to draw the blue wall with shadow
 function drawBlueWall() {
 	ctx.save(); // Save the current canvas state
@@ -770,7 +777,6 @@ function draw() {
 	drawBall();
 	drawBricks();
 	drawOrangeDot();
-	// drawVerticalLines(); // Draw vertical lines for orange projectiles
 	drawOrangeProjectiles(); // Draw orange projectiles
 
 	// Draw blue wall if the flag is true

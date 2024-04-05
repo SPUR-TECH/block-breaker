@@ -28,4 +28,8 @@ const PADDLE_HIT = new Howl({
 const WALL_HIT = new Howl({
 	src: "sounds/block-breaker-walls-sound.mp3",
 });
+
+const PROJECTILES = new Howl({
+	src: "sounds/projectiles.wav",
+});
 ////// Howler audio //////
