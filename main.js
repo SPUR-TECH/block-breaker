@@ -946,6 +946,14 @@ function update() {
 	levelUp();
 }
 
+// Function to clean up removed items periodically
+function cleanupRemovedItems() {
+	// Clean up orange projectiles
+	orangeProjectiles = orangeProjectiles.filter(
+		(projectile) => projectile.y > 0,
+	);
+}
+
 // GAME LOOP
 function loop() {
 	if (!GAME_OVER) {
@@ -955,6 +963,7 @@ function loop() {
 		// CLEAR THE CANVAS
 		ctx.clearRect(0, 0, cvs.width, cvs.height);
 		draw();
+		cleanupRemovedItems();
 		// drawGameTitle();
 		if (!PAUSED) {
 			BG_SOUND.play();
@@ -963,6 +972,7 @@ function loop() {
 		} else {
 			BG_SOUND.pause();
 			document.querySelector("#start-button").style.display = "block";
+			cleanupRemovedItems();
 		}
 	}
 }
