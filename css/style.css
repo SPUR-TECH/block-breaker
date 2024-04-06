@@ -43,8 +43,8 @@
      transform: translate(-50%, -50%);
      font-size: 35px;
      font-family: comic sans MS;
-     color: rgb(19, 223, 0);
-     text-shadow: 2px 2px 4px rgb(255, 0, 0);
+     color: rgb(255, 217, 0);
+     text-shadow: 3px 3px 4px rgb(255, 0, 0);
      z-index: 10;
      display: flex;
  }
