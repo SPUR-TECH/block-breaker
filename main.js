@@ -82,7 +82,12 @@ let RUNNING = false;
 function togglePause() {
 	PAUSED = !PAUSED;
 	if (PAUSED) {
+		PROJECTILES.pause(); // Pause projectile sound
 		BG_SOUND.pause(); // Pause background music
+
+		// Clear projectile creation interval
+		clearInterval(projectileInterval);
+
 		// drawGameTitle();
 	} else {
 		BG_SOUND.play(); // Resume background music
@@ -147,6 +152,9 @@ cvs.addEventListener("touchend", function () {
 document.getElementById("start-button").addEventListener("click", function () {
 	if (GAME_OVER) {
 		document.querySelector("#start-button").style.display = "block";
+
+		spliceAllProjectiles(); // Ensure all projectiles are spliced before restart
+
 		// Reset game variables
 		LIVES = 3;
 		SCORE = 0;
@@ -247,15 +255,13 @@ function moveBall() {
 	ball.y += ball.dy;
 }
 
-// RESET THE BALL
+// Function to reset the ball and increase speed based on level
 function resetBall() {
 	ball.x = cvs.width / 2;
 	ball.y = paddle.y - BALL_RADIUS;
 	ball.dx = 3 * (Math.random() * 2 - 1);
 	ball.dy = -3;
-	if (GAME_OVER) {
-		ball.speed = 3; // Reset ball speed only if game over
-	}
+	ball.speed = 3 + (LEVEL - 1) * 0.5; // Increase ball speed based on level
 }
 
 // BALL AND WALL COLLISION DETECTION
@@ -545,17 +551,17 @@ function drawOrangeDot() {
 		ctx.strokeStyle = "orange";
 		ctx.lineWidth = 3; // Set line width
 
-		// Draw the first orange line
+		// Draw the first orange line with adjusted coordinates
 		ctx.beginPath();
-		ctx.moveTo(orangeDotX, orangeDotY - 6); // Starting point (top)
-		ctx.lineTo(orangeDotX, orangeDotY + 6); // Ending point (bottom)
+		ctx.moveTo(orangeDotX - 10, orangeDotY - 6); // Starting point (top), adjusted by -10 pixels horizontally
+		ctx.lineTo(orangeDotX - 10, orangeDotY + 6); // Ending point (bottom), adjusted by -10 pixels horizontally
 		ctx.stroke();
 		ctx.closePath();
 
-		// Draw the second orange line
+		// Draw the second orange line with adjusted coordinates
 		ctx.beginPath();
-		ctx.moveTo(orangeDotX + 6, orangeDotY - 6); // Starting point (top)
-		ctx.lineTo(orangeDotX + 6, orangeDotY + 6); // Ending point (bottom)
+		ctx.moveTo(orangeDotX + 10, orangeDotY - 6); // Starting point (top), adjusted by +10 pixels horizontally
+		ctx.lineTo(orangeDotX + 10, orangeDotY + 6); // Ending point (bottom), adjusted by +10 pixels horizontally
 		ctx.stroke();
 		ctx.closePath();
 	}
@@ -864,6 +870,12 @@ function draw() {
 	}
 }
 
+// Function to splice all projectiles
+function spliceAllProjectiles() {
+	// Splice orange projectiles array
+	orangeProjectiles.splice(0, orangeProjectiles.length);
+}
+
 // game over
 function gameOver() {
 	if (LIVES <= 0) {
@@ -887,6 +899,9 @@ function gameOver() {
 		// Press restart
 
 		ctx.shadowColor = "black"; // Shadow color
+		greenDotVisible = false;
+		blueDotVisible = false;
+		orangeDotVisible = false;
 
 		GAME_OVER = true;
 
@@ -899,7 +914,17 @@ function gameOver() {
 		brick.row = 3; // Reset the number of rows of bricks to 3
 		GAMEOVER.play();
 		BG_SOUND.pause();
+		PROJECTILES.pause();
+
+		// Clear projectile creation interval
+		clearInterval(projectileInterval);
 	}
+}
+
+// Function to splice all projectiles when a level is cleared
+function spliceAllProjectiles() {
+	// Clear the orange projectiles array
+	orangeProjectiles = [];
 }
 
 // Level up function
@@ -928,6 +953,12 @@ function levelUp() {
 
 		// Re-randomize the green brick position
 		selectRandomBrickPosition();
+
+		// Clear projectile creation interval
+		clearInterval(projectileInterval);
+
+		// Call the function to splice all projectiles when a level is cleared
+		spliceAllProjectiles();
 	}
 }
 
