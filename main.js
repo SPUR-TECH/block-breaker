@@ -70,7 +70,7 @@ let orangeDotSpeed = 1; // Speed of the orange dot movement
 let orangeDotVisible = false; // Flag to indicate if the orange dot should be visible
 let orangeBrickHit = false;
 
-let LIVES = 0;
+let LIVES = 3;
 let SCORE = 0;
 let LEVEL = 1;
 let leftArrow = false;
