@@ -192,9 +192,9 @@ document.addEventListener("keyup", function (event) {
 
 // MOVE PADDLE
 function movePaddle() {
-	if (rightArrow && paddle.x + paddle.width < cvs.width) {
+	if (rightArrow && paddle.x + paddle.width + 3 < cvs.width) {
 		paddle.x += paddle.dx;
-	} else if (leftArrow && paddle.x > 0) {
+	} else if (leftArrow && paddle.x - 3 > 0) {
 		paddle.x -= paddle.dx;
 	}
 
