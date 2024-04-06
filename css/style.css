@@ -43,8 +43,13 @@
      transform: translate(-50%, -50%);
      font-size: 35px;
      font-family: comic sans MS;
-     color: rgb(0, 238, 255);
+     color: rgb(19, 223, 0);
      text-shadow: 2px 2px 4px rgb(255, 0, 0);
      z-index: 10;
      display: flex;
+ }
+
+ b {
+     color: rgb(221, 0, 0);
+     text-shadow: 2px 2px 4px rgb(255, 196, 0);
  }

@@ -889,7 +889,7 @@ function gameOver() {
 		ctx.shadowOffsetX = 1; // Horizontal shadow offset
 		ctx.shadowOffsetY = 1; // Vertical shadow offset
 		ctx.shadowBlur = 2; // Blur amount
-		ctx.fillText("GAME OVER !!", 50, 250);
+		ctx.fillText("GAME OVER !!", 50, 300);
 		// Score
 		ctx.font = "30px Comic Sans MS";
 		ctx.fillStyle = "yellow";
@@ -897,7 +897,7 @@ function gameOver() {
 		ctx.shadowOffsetX = 2; // Horizontal shadow offset
 		ctx.shadowOffsetY = 2; // Vertical shadow offset
 		ctx.shadowBlur = 4; // Blur amount
-		ctx.fillText("Score: " + SCORE, 100, 300);
+		ctx.fillText("Score: " + SCORE, 110, 350);
 		// Level
 		ctx.font = "30px Comic Sans MS";
 		ctx.fillStyle = "white";
@@ -905,7 +905,7 @@ function gameOver() {
 		ctx.shadowOffsetX = 2; // Horizontal shadow offset
 		ctx.shadowOffsetY = 2; // Vertical shadow offset
 		ctx.shadowBlur = 4; // Blur amount
-		ctx.fillText("Level: " + LEVEL, 100, 350);
+		ctx.fillText("Level: " + LEVEL, 120, 400);
 
 		greenDotVisible = false;
 		blueDotVisible = false;
