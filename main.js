@@ -571,8 +571,8 @@ selectRandomOrangeBrickPosition();
 
 function createOrangeProjectiles() {
 	// Calculate initial x position for the projectiles
-	let x1 = paddle.x; // Set x1 to the left end of the paddle
-	let x2 = paddle.x + paddle.width; // Set x2 to the right end of the paddle
+	let x1 = paddle.x + 10; // Set x1 to 10 pixels in from the left end of the paddle
+	let x2 = paddle.x + paddle.width - 10; // Set x2 to 10 pixels in from the right end of the paddle
 
 	// Calculate initial y position for the projectiles
 	let y = paddle.y - 10; // Adjust the initial y position as needed
