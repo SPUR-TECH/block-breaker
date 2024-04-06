@@ -16,7 +16,7 @@
 
  #start-button {
      position: absolute;
-     top: 65%;
+     top: 67%;
      left: 50%;
      transform: translate(-50%, -50%);
      border-style: solid;
@@ -38,10 +38,10 @@
 
  h1 {
      position: absolute;
-     top: 25%;
+     top: 26%;
      left: 50%;
      transform: translate(-50%, -50%);
-     font-size: 35px;
+     font-size: 40px;
      font-family: comic sans MS;
      color: rgb(255, 217, 0);
      text-shadow: 3px 3px 4px rgb(255, 0, 0);

@@ -70,7 +70,7 @@ let orangeDotSpeed = 1; // Speed of the orange dot movement
 let orangeDotVisible = false; // Flag to indicate if the orange dot should be visible
 let orangeBrickHit = false;
 
-let LIVES = 3;
+let LIVES = 0;
 let SCORE = 0;
 let LEVEL = 1;
 let leftArrow = false;
@@ -886,18 +886,18 @@ function gameOver() {
 		ctx.font = "40px Comic Sans MS";
 		ctx.fillStyle = "red";
 		ctx.shadowColor = "yellow"; // Shadow color
-		ctx.shadowOffsetX = 1; // Horizontal shadow offset
-		ctx.shadowOffsetY = 1; // Vertical shadow offset
+		ctx.shadowOffsetX = 2; // Horizontal shadow offset
+		ctx.shadowOffsetY = 2; // Vertical shadow offset
 		ctx.shadowBlur = 2; // Blur amount
 		ctx.fillText("GAME OVER !!", 50, 300);
 		// Score
-		ctx.font = "30px Comic Sans MS";
+		ctx.font = "35px Comic Sans MS";
 		ctx.fillStyle = "yellow";
 		ctx.shadowColor = "red"; // Shadow color
-		ctx.shadowOffsetX = 2; // Horizontal shadow offset
-		ctx.shadowOffsetY = 2; // Vertical shadow offset
+		ctx.shadowOffsetX = 3; // Horizontal shadow offset
+		ctx.shadowOffsetY = 3; // Vertical shadow offset
 		ctx.shadowBlur = 4; // Blur amount
-		ctx.fillText("Score: " + SCORE, 110, 350);
+		ctx.fillText("Score: " + SCORE, 100, 350);
 		// Level
 		ctx.font = "30px Comic Sans MS";
 		ctx.fillStyle = "white";
