@@ -36,11 +36,15 @@
      display: none;
  }
 
- /* h1 {
-     text-align: center;
-     font-size: 40px;
+ h1 {
+     position: absolute;
+     top: 25%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     font-size: 35px;
      font-family: comic sans MS;
-     color: rgb(255, 0, 0);
-     text-shadow: 5px 5px 4px rgb(0, 0, 0);
+     color: rgb(0, 238, 255);
+     text-shadow: 2px 2px 4px rgb(255, 0, 0);
      z-index: 10;
- } */
+     display: flex;
+ }

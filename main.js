@@ -152,6 +152,7 @@ cvs.addEventListener("touchend", function () {
 document.getElementById("start-button").addEventListener("click", function () {
 	if (GAME_OVER) {
 		document.querySelector("#start-button").style.display = "block";
+		document.querySelector("#h1").style.display = "flex";
 
 		spliceAllProjectiles(); // Ensure all projectiles are spliced before restart
 
@@ -880,7 +881,8 @@ function spliceAllProjectiles() {
 function gameOver() {
 	if (LIVES <= 0) {
 		document.querySelector("#start-button").style.display = "block";
-		//Game Over !!
+		document.querySelector("#h1").style.display = "flex";
+		// Game Over !!
 		ctx.font = "40px Comic Sans MS";
 		ctx.fillStyle = "red";
 		ctx.shadowColor = "yellow"; // Shadow color
@@ -896,9 +898,15 @@ function gameOver() {
 		ctx.shadowOffsetY = 2; // Vertical shadow offset
 		ctx.shadowBlur = 4; // Blur amount
 		ctx.fillText("Score: " + SCORE, 100, 300);
-		// Press restart
-
+		// Level
+		ctx.font = "30px Comic Sans MS";
+		ctx.fillStyle = "white";
 		ctx.shadowColor = "black"; // Shadow color
+		ctx.shadowOffsetX = 2; // Horizontal shadow offset
+		ctx.shadowOffsetY = 2; // Vertical shadow offset
+		ctx.shadowBlur = 4; // Blur amount
+		ctx.fillText("Level: " + LEVEL, 100, 350);
+
 		greenDotVisible = false;
 		blueDotVisible = false;
 		orangeDotVisible = false;
@@ -990,6 +998,7 @@ function loop() {
 	if (!GAME_OVER) {
 		RUNNING = true;
 		document.querySelector("#start-button").style.display = "none";
+		document.querySelector("#h1").style.display = "none";
 		requestAnimationFrame(loop);
 		// CLEAR THE CANVAS
 		ctx.clearRect(0, 0, cvs.width, cvs.height);
@@ -1003,6 +1012,7 @@ function loop() {
 		} else {
 			BG_SOUND.pause();
 			document.querySelector("#start-button").style.display = "block";
+			document.querySelector("#h1").style.display = "flex";
 			cleanupRemovedItems();
 		}
 	}
