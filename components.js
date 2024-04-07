@@ -12,6 +12,9 @@ GAMEOVER.src = "sounds/block-breaker-gameover-sound.mp3";
 
 const WIN = new Audio();
 WIN.src = "sounds/block-breaker-level-sound.mp3";
+
+const SHIELD_HIT = new Audio();
+SHIELD_HIT.src = "sounds/sheild-bounce.mp3";
 ////// Standard audio ///////
 
 ////////////////////////////////////////////////////////////

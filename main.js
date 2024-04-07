@@ -70,7 +70,7 @@ let orangeDotSpeed = 1; // Speed of the orange dot movement
 let orangeDotVisible = false; // Flag to indicate if the orange dot should be visible
 let orangeBrickHit = false;
 
-let LIVES = 0;
+let LIVES = 3;
 let SCORE = 0;
 let LEVEL = 1;
 let leftArrow = false;
@@ -208,7 +208,7 @@ function movePaddle() {
 		paddle.y + paddle.height > greenDotY - 5
 	) {
 		// Increase paddle width by 20%
-		let paddleGrowth = paddle.width * 0.25; // 25% increase
+		let paddleGrowth = paddle.width * 0.5; // 25% increase
 		let newPaddleWidth = paddle.width + paddleGrowth;
 		let paddleShift = paddleGrowth / 2; // Shift paddle to the left by half of the growth
 
@@ -295,7 +295,7 @@ function ballWallCollision() {
 			ball.x < cvs.width // Check if the ball is within the right boundary of the canvas
 		) {
 			ball.dy = -ball.dy; // Reverse the y-direction of the ball
-			WALL_HIT.play(); // Play the wall hit sound
+			SHIELD_HIT.play(); // Play the wall hit sound
 		}
 	}
 }
