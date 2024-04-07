@@ -1,6 +1,9 @@
 /////// LOAD SOUNDS ////////
 
 ////// Standard audio ///////
+const START = new Audio();
+START.src = "sounds/start.mp3";
+
 const BG_SOUND = new Audio();
 BG_SOUND.src = "sounds/block-breaker-bg2-sound.mp3";
 

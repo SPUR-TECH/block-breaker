@@ -168,6 +168,8 @@ document.getElementById("start-button").addEventListener("click", function () {
 	} else {
 		togglePause(); // Toggle pause state
 	}
+	// Play START sound
+	START.play();
 });
 
 document.addEventListener("keydown", function (event) {
