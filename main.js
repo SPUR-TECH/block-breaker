@@ -207,6 +207,7 @@ function movePaddle() {
 		paddle.y < greenDotY + 5 &&
 		paddle.y + paddle.height > greenDotY - 5
 	) {
+		PADDLE_ENLARGED.play();
 		// Increase paddle width by 20%
 		let paddleGrowth = paddle.width * 0.5; // 25% increase
 		let newPaddleWidth = paddle.width + paddleGrowth;
@@ -268,7 +269,7 @@ function resetBall() {
 // BALL AND WALL COLLISION DETECTION
 function ballWallCollision() {
 	// Side walls
-	if (ball.x + ball.radius > cvs.width || ball.x - ball.radius < 0) {
+	if (ball.x + ball.radius + 3 > cvs.width || ball.x - ball.radius - 3 < 0) {
 		ball.dx = -ball.dx;
 		WALL_HIT.play();
 	}
@@ -319,6 +320,7 @@ function ballPaddleCollision() {
 			let newPaddleWidth = paddle.width * 1.5;
 			// Ensure the paddle width does not exceed the canvas width
 			paddle.width = Math.min(newPaddleWidth, cvs.width - paddle.x);
+			PADDLE_ENLARGED.play();
 		} else {
 			// PLAY SOUND
 			PADDLE_HIT.play();
@@ -737,7 +739,7 @@ function moveBlueDot() {
 		) {
 			blueDotVisible = false; // Hide the blue dot
 			blueWallVisible = true; // Set flag to show blue wall
-			console.log("Blue dot hit the paddle!"); // Log message when blue dot hits the paddle
+			SHIELD_UP.play();
 			// Reset blue wall visibility after 10 seconds
 			setTimeout(resetBlueWallVisibility, 10000);
 		}

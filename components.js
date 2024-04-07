@@ -13,8 +13,14 @@ GAMEOVER.src = "sounds/block-breaker-gameover-sound.mp3";
 const WIN = new Audio();
 WIN.src = "sounds/block-breaker-level-sound.mp3";
 
+const SHIELD_UP = new Audio();
+SHIELD_UP.src = "sounds/shield-up.mp3";
+
 const SHIELD_HIT = new Audio();
-SHIELD_HIT.src = "sounds/sheild-bounce.mp3";
+SHIELD_HIT.src = "sounds/shield-bounce2.mp3";
+
+const PADDLE_ENLARGED = new Audio();
+PADDLE_ENLARGED.src = "sounds/paddle-enlarged.mp3";
 ////// Standard audio ///////
 
 ////////////////////////////////////////////////////////////
