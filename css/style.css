@@ -49,6 +49,33 @@
      display: flex;
  }
 
+ #left-button {
+     position: absolute;
+     top: 50%;
+     left: 42%;
+     transform: translate(-50%, -50%);
+     opacity: .2;
+ }
+
+ #right-button {
+     position: absolute;
+     top: 50%;
+     left: 58%;
+     transform: translate(-50%, -50%);
+     opacity: .2;
+ }
+
+ .button {
+     -webkit-user-select: none;
+     /* Disable selection on WebKit browsers */
+     -moz-user-select: none;
+     /* Disable selection on Firefox */
+     -ms-user-select: none;
+     /* Disable selection on IE/Edge */
+     user-select: none;
+     /* Disable selection on other browsers */
+ }
+
  @media all and (max-width: 400px) {
      h1 {
          top: 32%;

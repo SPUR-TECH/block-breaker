@@ -133,21 +133,33 @@ function drawPaddle() {
 }
 
 // CONTROL THE PADDLE
-cvs.addEventListener("touchstart", function (event) {
-	let touchX = event.touches[0].clientX;
-	// Check if touch is on the left half of the screen
-	if (touchX < cvs.width / 2) {
+document
+	.getElementById("left-button")
+	.addEventListener("touchstart", function (event) {
+		event.preventDefault(); // Prevent default behavior (e.g., image selection)
 		leftArrow = true;
-	} else {
-		rightArrow = true;
-	}
-});
+	});
 
-// Touch end event listener
-cvs.addEventListener("touchend", function () {
-	leftArrow = false;
-	rightArrow = false;
-});
+document
+	.getElementById("left-button")
+	.addEventListener("touchend", function (event) {
+		event.preventDefault(); // Prevent default behavior (e.g., image selection)
+		leftArrow = false;
+	});
+
+document
+	.getElementById("right-button")
+	.addEventListener("touchstart", function (event) {
+		event.preventDefault(); // Prevent default behavior (e.g., image selection)
+		rightArrow = true;
+	});
+
+document
+	.getElementById("right-button")
+	.addEventListener("touchend", function (event) {
+		event.preventDefault(); // Prevent default behavior (e.g., image selection)
+		rightArrow = false;
+	});
 
 document.getElementById("start-button").addEventListener("click", function () {
 	if (GAME_OVER) {
