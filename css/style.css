@@ -3,7 +3,7 @@
      padding: 0;
      text-align: center;
      height: 100vh;
-     background-image: linear-gradient(rgb(0, 162, 255), black);
+     background-image: linear-gradient(rgb(100, 100, 100), black);
  }
 
  #canvas {
@@ -51,7 +51,7 @@
 
  @media all and (max-width: 400px) {
      h1 {
-         top: 30%;
+         top: 32%;
      }
 
      #start-button {
