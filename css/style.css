@@ -16,7 +16,7 @@
 
  #start-button {
      position: absolute;
-     top: 67%;
+     top: 60%;
      left: 50%;
      transform: translate(-50%, -50%);
      border-style: solid;
@@ -51,6 +51,10 @@
 
  @media all and (max-width: 400px) {
      h1 {
-         top: 28%;
+         top: 30%;
+     }
+
+     #start-button {
+         top: 68%;
      }
  }
