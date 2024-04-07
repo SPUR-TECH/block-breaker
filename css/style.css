@@ -50,7 +50,6 @@
  }
 
  #left-button {
-     display: flex;
      position: absolute;
      top: 50%;
      left: 42%;
@@ -59,7 +58,6 @@
  }
 
  #right-button {
-     display: flex;
      position: absolute;
      top: 50%;
      left: 58%;
@@ -78,7 +76,40 @@
      /* Disable selection on other browsers */
  }
 
- @media all and (max-width: 1000px) {
+ @media all and (max-width: 3000px) {
+     #left-button {
+         left: 45%;
+     }
+
+     #right-button {
+         left: 55%;
+     }
+
+ }
+
+ @media all and (max-width: 1800px) {
+     #left-button {
+         left: 42%;
+     }
+
+     #right-button {
+         left: 58%;
+     }
+
+ }
+
+ @media all and (max-width: 1200px) {
+     #left-button {
+         left: 40%;
+     }
+
+     #right-button {
+         left: 60%;
+     }
+
+ }
+
+ @media all and (max-width: 800px) {
      #left-button {
          left: 30%;
      }
@@ -86,7 +117,16 @@
      #right-button {
          left: 70%;
      }
+ }
 
+ @media all and (max-width: 600px) {
+     #left-button {
+         left: 25%;
+     }
+
+     #right-button {
+         left: 75%;
+     }
  }
 
  @media all and (max-width: 400px) {
@@ -99,18 +139,12 @@
      }
 
      #left-button {
-         position: absolute;
          top: 60%;
          left: 12%;
-         transform: translate(-50%, -50%);
-         opacity: .2;
      }
 
      #right-button {
-         position: absolute;
          top: 60%;
          left: 88%;
-         transform: translate(-50%, -50%);
-         opacity: .2;
      }
  }
