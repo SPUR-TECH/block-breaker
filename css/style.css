@@ -50,7 +50,7 @@
  }
 
  #left-button {
-     display: none;
+     display: flex;
      position: absolute;
      top: 50%;
      left: 42%;
@@ -59,7 +59,7 @@
  }
 
  #right-button {
-     display: none;
+     display: flex;
      position: absolute;
      top: 50%;
      left: 58%;
@@ -78,6 +78,17 @@
      /* Disable selection on other browsers */
  }
 
+ @media all and (max-width: 1000px) {
+     #left-button {
+         left: 30%;
+     }
+
+     #right-button {
+         left: 70%;
+     }
+
+ }
+
  @media all and (max-width: 400px) {
      h1 {
          top: 32%;
@@ -88,7 +99,6 @@
      }
 
      #left-button {
-         display: flex;
          position: absolute;
          top: 60%;
          left: 12%;
@@ -97,7 +107,6 @@
      }
 
      #right-button {
-         display: flex;
          position: absolute;
          top: 60%;
          left: 88%;
