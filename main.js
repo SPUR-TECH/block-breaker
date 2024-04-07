@@ -283,7 +283,7 @@ function resetBall() {
 // BALL AND WALL COLLISION DETECTION
 function ballWallCollision() {
 	// Side walls
-	if (ball.x + ball.radius + 3 > cvs.width || ball.x - ball.radius - 3 < 0) {
+	if (ball.x + ball.radius + 5 > cvs.width || ball.x - ball.radius - 5 < 0) {
 		ball.dx = -ball.dx;
 		WALL_HIT.play();
 	}
