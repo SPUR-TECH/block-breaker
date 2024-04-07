@@ -50,6 +50,7 @@
  }
 
  #left-button {
+     display: none;
      position: absolute;
      top: 50%;
      left: 42%;
@@ -58,6 +59,7 @@
  }
 
  #right-button {
+     display: none;
      position: absolute;
      top: 50%;
      left: 58%;
@@ -83,5 +85,23 @@
 
      #start-button {
          top: 68%;
+     }
+
+     #left-button {
+         display: flex;
+         position: absolute;
+         top: 60%;
+         left: 12%;
+         transform: translate(-50%, -50%);
+         opacity: .2;
+     }
+
+     #right-button {
+         display: flex;
+         position: absolute;
+         top: 60%;
+         left: 88%;
+         transform: translate(-50%, -50%);
+         opacity: .2;
      }
  }
