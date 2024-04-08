@@ -55,6 +55,16 @@
      left: 42%;
      transform: translate(-50%, -50%);
      opacity: .2;
+     /* Disable selection on Safari browsers */
+     -webkit-touch-callout: none;
+     /* Disable selection on Safari browsers */
+     -webkit-user-select: none;
+     /* Disable selection on Firefox */
+     -moz-user-select: none;
+     /* Disable selection on IE/Edge */
+     -ms-user-select: none;
+     /* Disable selection on other browsers */
+     user-select: none;
  }
 
  #right-button {
@@ -63,28 +73,29 @@
      left: 58%;
      transform: translate(-50%, -50%);
      opacity: .2;
+     /* Disable selection on Safari browsers */
+     -webkit-touch-callout: none;
+     /* Disable selection on Safari browsers */
+     -webkit-user-select: none;
+     /* Disable selection on Firefox */
+     -moz-user-select: none;
+     /* Disable selection on IE/Edge */
+     -ms-user-select: none;
+     /* Disable selection on other browsers */
+     user-select: none;
  }
 
  .button {
+     /* Disable selection on Safari browsers */
+     -webkit-touch-callout: none;
+     /* Disable selection on Safari browsers */
      -webkit-user-select: none;
-     /* Disable selection on WebKit browsers */
-     -moz-user-select: none;
      /* Disable selection on Firefox */
-     -ms-user-select: none;
+     -moz-user-select: none;
      /* Disable selection on IE/Edge */
-     user-select: none;
+     -ms-user-select: none;
      /* Disable selection on other browsers */
- }
-
- @media all and (max-width: 3000px) {
-     #left-button {
-         left: 45%;
-     }
-
-     #right-button {
-         left: 55%;
-     }
-
+     user-select: none;
  }
 
  @media all and (max-width: 1800px) {
@@ -98,13 +109,54 @@
 
  }
 
- @media all and (max-width: 1200px) {
+ @media all and (max-width: 1600px) {
+     #left-button {
+         left: 41%;
+     }
+
+     #right-button {
+         left: 59%;
+     }
+
+ }
+
+ @media all and (max-width: 1400px) {
+     h1 {
+         top: 32%;
+     }
+
+     #start-button {
+         top: 68%;
+     }
+
      #left-button {
          left: 40%;
      }
 
      #right-button {
          left: 60%;
+     }
+
+ }
+
+ @media all and (max-width: 1200px) {
+     #left-button {
+         left: 38%;
+     }
+
+     #right-button {
+         left: 62%;
+     }
+
+ }
+
+ @media all and (max-width: 1000px) {
+     #left-button {
+         left: 35%;
+     }
+
+     #right-button {
+         left: 65%;
      }
 
  }
@@ -129,15 +181,17 @@
      }
  }
 
+ @media all and (max-width: 500px) {
+     #left-button {
+         left: 21%;
+     }
+
+     #right-button {
+         left: 79%;
+     }
+ }
+
  @media all and (max-width: 400px) {
-     h1 {
-         top: 32%;
-     }
-
-     #start-button {
-         top: 68%;
-     }
-
      #left-button {
          top: 60%;
          left: 12%;
