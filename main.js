@@ -283,22 +283,31 @@ function resetBall() {
 // BALL AND WALL COLLISION DETECTION
 function ballWallCollision() {
 	// Side walls
-	if (ball.x + ball.radius + 5 > cvs.width || ball.x - ball.radius - 5 < 0) {
-		ball.dx = -ball.dx;
-		WALL_HIT.play();
+	if (ball.x + ball.radius >= cvs.width) {
+		// Adjust ball's position to prevent overlap with the wall
+		ball.x = cvs.width - ball.radius;
+		ball.dx = -ball.dx; // Reverse horizontal velocity
+		WALL_HIT.play(); // Play sound for wall hit
+	} else if (ball.x - ball.radius <= 0) {
+		// Adjust ball's position to prevent overlap with the wall
+		ball.x = ball.radius;
+		ball.dx = -ball.dx; // Reverse horizontal velocity
+		WALL_HIT.play(); // Play sound for wall hit
 	}
 
 	// Top wall
-	if (ball.y - ball.radius < 0) {
-		ball.dy = -ball.dy;
-		WALL_HIT.play();
+	if (ball.y - ball.radius <= 0) {
+		// Adjust ball's position to prevent overlap with the wall
+		ball.y = ball.radius;
+		ball.dy = -ball.dy; // Reverse vertical velocity
+		WALL_HIT.play(); // Play sound for wall hit
 	}
 
-	// Bottom
-	if (ball.y + ball.radius > cvs.height) {
-		LIVES--; // LOSE LIFE
-		LIFE_LOST.play();
-		resetBall();
+	// Bottom wall
+	if (ball.y + ball.radius >= cvs.height) {
+		LIVES--; // Decrease lives
+		LIFE_LOST.play(); // Play sound for life lost
+		resetBall(); // Reset ball position
 	}
 
 	// Check for collision with blue wall if it's visible

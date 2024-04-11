@@ -67,6 +67,7 @@
      -ms-user-select: none;
      /* Disable selection on other browsers */
      user-select: none;
+     display: none;
  }
 
  #right-button {
@@ -85,6 +86,7 @@
      -ms-user-select: none;
      /* Disable selection on other browsers */
      user-select: none;
+     display: none;
  }
 
  .button {
@@ -100,7 +102,7 @@
      user-select: none;
  }
 
- @media all and (min-width: 2000px) {
+ /* @media all and (min-width: 2000px) {
      #left-button {
          left: 42%;
          display: none;
@@ -110,15 +112,17 @@
          left: 58%;
          display: none;
      }
- }
+ } */
 
  @media all and (max-width: 1800px) {
      #left-button {
          left: 42%;
+         display: flex;
      }
 
      #right-button {
          left: 58%;
+         display: flex;
      }
 
  }
