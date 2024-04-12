@@ -12,8 +12,8 @@ const MAX_ROWS = 10;
 
 // CREATE THE BRICKS
 const brick = {
-	row: 1,
-	column: 4,
+	row: 3,
+	column: 6,
 	width: 50,
 	height: 10,
 	offSetLeft: 6,
@@ -49,7 +49,6 @@ let bricks = [];
 let greenBrickPosition = null;
 let blueBrickPosition = null;
 let orangeBrickPosition = null;
-let purpleBrickPosition = null;
 
 let greenDotX = 0; // Initial X position of the green dot
 let greenDotY = 0; // Initial Y position of the green dot
@@ -70,12 +69,6 @@ let orangeDotY = 0; // Initial Y position of the orange dot
 let orangeDotSpeed = 1; // Speed of the orange dot movement
 let orangeDotVisible = false; // Flag to indicate if the orange dot should be visible
 let orangeBrickHit = false;
-
-let purpleDotX = 0; // Initial X position of the purple dot
-let purpleDotY = 0; // Initial Y position of the purple dot
-let purpleDotSpeed = 1; // Speed of the purple dot movement
-let purpleDotVisible = false; // Flag to indicate if the purple dot should be visible
-let purpleBrickHit = false;
 
 let LIVES = 3;
 let SCORE = 0;
@@ -391,81 +384,56 @@ function createBricks() {
 }
 createBricks();
 
-// Function to select random brick positions for green, blue, orange, and purple shadows and dots
-function selectRandomBrickPositions() {
-	// Function to select a random brick position
-	const selectRandomPosition = (excludePositions) => {
-		let row, column;
-		do {
-			row = Math.floor(Math.random() * brick.row);
-			column = Math.floor(Math.random() * brick.column);
-		} while (
-			!bricks[row][column].status ||
-			excludePositions.some((pos) => pos.row === row && pos.column === column)
-		);
-		return { row, column };
-	};
-
-	// Select a random position for the green shadow and dot
-	greenBrickPosition = selectRandomPosition([]);
-
-	// Select a random position for the blue shadow and dot, excluding the green position
-	blueBrickPosition = selectRandomPosition([greenBrickPosition]);
-
-	// Select a random position for the orange shadow and dot, excluding the green and blue positions
-	orangeBrickPosition = selectRandomPosition([
-		greenBrickPosition,
-		blueBrickPosition,
-	]);
-
-	// Select a random position for the purple shadow and dot, excluding the green, blue, and orange positions
-	purpleBrickPosition = selectRandomPosition([
-		greenBrickPosition,
-		blueBrickPosition,
-		orangeBrickPosition,
-	]);
-}
-
-// Call selectRandomBrickPositions() to choose random brick positions
-selectRandomBrickPositions();
-
-// Draw a purple dot if it's visible
-function drawPurpleDot() {
-	if (purpleDotVisible) {
-		ctx.font = "20px Arial"; // Set the font size and type
-		ctx.fillStyle = "lightgreen"; // Set the text color to purple
-		ctx.fillText("1UP!", purpleDotX - 25, purpleDotY); // Display "1UP" at the center of the purple dot
+// Function to select a random brick position for green shadow and dot
+function selectRandomBrickPosition() {
+	// Randomly choose a row and column within the available bricks
+	let row = Math.floor(Math.random() * brick.row);
+	let column = Math.floor(Math.random() * brick.column);
+	// Check if the selected brick is already broken, if so, choose another position
+	while (!bricks[row][column].status) {
+		row = Math.floor(Math.random() * brick.row);
+		column = Math.floor(Math.random() * brick.column);
 	}
+	greenBrickPosition = { row, column };
+	// Select a different position for the blue shadow and dot
+	selectRandomBlueBrickPosition();
 }
 
-// Function to move the purple dot down the canvas
-function movePurpleDot() {
-	if (purpleDotVisible) {
-		// Move the purple dot down the canvas
-		purpleDotY += purpleDotSpeed;
-
-		// Check if the purple dot collides with the paddle
-		if (
-			purpleDotX > paddle.x &&
-			purpleDotX < paddle.x + paddle.width &&
-			purpleDotY + 20 > paddle.y &&
-			purpleDotY < paddle.y + paddle.height
-		) {
-			// If the purple dot hits the paddle, add 1 life
-			LIVES++;
-			// Hide the purple dot
-			purpleDotVisible = false;
-			// Play a sound or show a message indicating the player gained a life
-			// You can add sound effects or display a message here
-		}
-
-		// Check if the purple dot is out of the canvas
-		if (purpleDotY > cvs.height) {
-			// If the purple dot is out of the canvas, reset its position
-			purpleDotY = 0; // You can set it to any value you prefer
-		}
+// Function to select a random brick position for blue shadow and dot
+function selectRandomBlueBrickPosition() {
+	// Randomly choose a row and column within the available bricks
+	let row = Math.floor(Math.random() * brick.row);
+	let column = Math.floor(Math.random() * brick.column);
+	// Check if the selected brick is already broken, if so, choose another position
+	while (
+		!bricks[row][column].status ||
+		(row === greenBrickPosition.row && column === greenBrickPosition.column)
+	) {
+		row = Math.floor(Math.random() * brick.row);
+		column = Math.floor(Math.random() * brick.column);
 	}
+	blueBrickPosition = { row, column };
 }
+
+// Function to select a random brick position for orange shadow and dot
+function selectRandomOrangeBrickPosition() {
+	// Randomly choose a row and column within the available bricks
+	let row = Math.floor(Math.random() * brick.row);
+	let column = Math.floor(Math.random() * brick.column);
+	// Check if the selected brick is already broken, if so, choose another position
+	while (
+		!bricks[row][column].status ||
+		(row === greenBrickPosition.row && column === greenBrickPosition.column) ||
+		(row === blueBrickPosition.row && column === blueBrickPosition.column)
+	) {
+		row = Math.floor(Math.random() * brick.row);
+		column = Math.floor(Math.random() * brick.column);
+	}
+	orangeBrickPosition = { row, column };
+}
+
+// Call selectRandomBrickPosition() to choose a random brick position
+selectRandomBrickPosition();
 
 // DRAW BRICKS FUNCTION
 function drawBricks() {
@@ -474,36 +442,27 @@ function drawBricks() {
 			let b = bricks[r][c];
 			// if the brick isn't broken
 			if (b.status) {
-				let shadowColor;
 				if (
 					greenBrickPosition &&
 					greenBrickPosition.row === r &&
 					greenBrickPosition.column === c
 				) {
-					shadowColor = "green";
+					ctx.shadowColor = "green"; // Set shadow color to green for the randomly selected brick
 				} else if (
 					blueBrickPosition &&
 					blueBrickPosition.row === r &&
 					blueBrickPosition.column === c
 				) {
-					shadowColor = "blue";
+					ctx.shadowColor = "blue"; // Set shadow color to blue for the randomly selected brick
 				} else if (
 					orangeBrickPosition &&
 					orangeBrickPosition.row === r &&
 					orangeBrickPosition.column === c
 				) {
-					shadowColor = "orange";
-				} else if (
-					purpleBrickPosition &&
-					purpleBrickPosition.row === r &&
-					purpleBrickPosition.column === c
-				) {
-					shadowColor = "purple";
+					ctx.shadowColor = "orange"; // Set shadow color to orange for the randomly selected brick
 				} else {
-					shadowColor = "red";
+					ctx.shadowColor = "red"; // Default shadow color
 				}
-
-				ctx.shadowColor = shadowColor; // Set shadow color
 
 				// Create linear gradient for brick (from top to bottom)
 				let brickGradient = ctx.createLinearGradient(
@@ -634,12 +593,7 @@ function drawOrangeDot() {
 	}
 }
 
-// Draw a purple dot if it's visible
-if (purpleDotVisible) {
-	ctx.font = "30px Arial"; // Set the font size and type
-	ctx.fillStyle = "purple"; // Set the text color to purple
-	ctx.fillText("1UP", purpleDotX - 25, purpleDotY); // Display "1UP" at the center of the purple dot
-}
+selectRandomOrangeBrickPosition();
 
 function createOrangeProjectiles() {
 	// Calculate initial x position for the projectiles
@@ -766,17 +720,6 @@ function ballBrickCollision() {
 						orangeDotX = b.x + brick.width / 2;
 						orangeDotY = b.y + brick.height / 2;
 						orangeDotVisible = true; // Make the orange dot visible
-					} else if (
-						purpleBrickPosition &&
-						purpleBrickPosition.row === r &&
-						purpleBrickPosition.column === c
-					) {
-						// If the ball hits the purple shadow brick, set a flag to indicate it
-						purpleBrickHit = true;
-						// Set the position of the purple dot to the center of the brick
-						purpleDotX = b.x + brick.width / 2;
-						purpleDotY = b.y + brick.height / 2;
-						purpleDotVisible = true; // Make the purple dot visible
 					}
 					BRICK_HIT.play();
 					ball.dy = -ball.dy;
@@ -866,7 +809,6 @@ function draw() {
 	drawBall();
 	drawBricks();
 	drawOrangeDot();
-	drawPurpleDot();
 	drawOrangeProjectiles(); // Draw orange projectiles
 
 	// Draw blue wall if the flag is true
@@ -1042,6 +984,9 @@ function levelUp() {
 		// Create new bricks
 		createBricks();
 
+		// Re-randomize the green brick position
+		selectRandomBrickPosition();
+
 		// Clear projectile creation interval
 		clearInterval(projectileInterval);
 
@@ -1060,7 +1005,6 @@ function update() {
 	moveGreenDot();
 	moveBlueDot();
 	moveOrangeDot();
-	movePurpleDot();
 	moveOrangeProjectiles(); // Move orange projectiles
 	gameOver();
 	levelUp();
