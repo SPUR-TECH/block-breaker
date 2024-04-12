@@ -8,7 +8,6 @@ const PADDLE_MARGIN_BOTTOM = 15;
 const PADDLE_HEIGHT = 10;
 const BALL_RADIUS = 6;
 const SCORE_UNIT = 10;
-const MAX_ROWS = 10;
 
 // CREATE THE BRICKS
 const brick = {
@@ -71,9 +70,15 @@ let orangeDotSpeed = 1; // Speed of the orange dot movement
 let orangeDotVisible = false; // Flag to indicate if the orange dot should be visible
 let orangeBrickHit = false;
 
+let purpleDotX = 0; // Initial X position of the purple dot
+let purpleDotY = 0; // Initial Y position of the purple dot
+let purpleDotSpeed = 1; // Speed of the purple dot movement
+let purpleDotVisible = false; // Flag to indicate if the purple dot should be visible
+let purpleBrickHit = false;
+
 let LIVES = 3;
 let SCORE = 0;
-let LEVEL = 1;
+let LEVEL = 3;
 let leftArrow = false;
 let rightArrow = false;
 let GAME_OVER = false;
@@ -710,6 +715,16 @@ function orangeProjectileHitsBrick(projectile) {
 	return false; // Return false if no hit occurs
 }
 
+// Function to draw the purple dot
+function drawPurpleDot() {
+	if (purpleDotVisible) {
+		// Draw 1UP! at the purple dot position
+		ctx.fillStyle = "lightgreen";
+		ctx.font = "20px Comic Sans MS";
+		ctx.fillText("1UP", purpleDotX, purpleDotY);
+	}
+}
+
 // ball brick collision
 function ballBrickCollision() {
 	for (let r = 0; r < brick.row; r++) {
@@ -756,6 +771,17 @@ function ballBrickCollision() {
 						orangeDotX = b.x + brick.width / 2;
 						orangeDotY = b.y + brick.height / 2;
 						orangeDotVisible = true; // Make the orange dot visible
+					} else if (
+						purpleBrickPosition &&
+						purpleBrickPosition.row === r &&
+						purpleBrickPosition.column === c
+					) {
+						// If the ball hits the purple shadow brick, set a flag to indicate it
+						purpleBrickHit = true;
+						// Set the position of the purple dot to the center of the brick
+						purpleDotX = b.x + brick.width / 2;
+						purpleDotY = b.y + brick.height / 2;
+						purpleDotVisible = true; // Make the purple dot visible
 					}
 					BRICK_HIT.play();
 					ball.dy = -ball.dy;
@@ -763,6 +789,27 @@ function ballBrickCollision() {
 					SCORE += SCORE_UNIT;
 				}
 			}
+		}
+	}
+}
+
+// Function to move the purple dot down the canvas
+function movePurpleDot() {
+	if (purpleDotVisible) {
+		// Move the purple dot down the canvas
+		purpleDotY += purpleDotSpeed;
+		// Check if the purple dot hits the paddle
+		if (
+			purpleDotY + 5 >= paddle.y && // Check if the bottom of the purple dot hits the top of the paddle
+			purpleDotX >= paddle.x && // Check if the purple dot is horizontally aligned with the paddle
+			purpleDotX <= paddle.x + paddle.width // Check if the purple dot is horizontally aligned with the paddle
+		) {
+			purpleDotVisible = false; // Hide the purple dot
+			LIVES++;
+		}
+		// Check if the purple dot is out of the canvas
+		if (purpleDotY > cvs.height) {
+			purpleDotVisible = false; // Hide the purple dot
 		}
 	}
 }
@@ -846,6 +893,7 @@ function draw() {
 	drawBricks();
 	drawOrangeDot();
 	drawOrangeProjectiles(); // Draw orange projectiles
+	drawPurpleDot();
 
 	// Draw blue wall if the flag is true
 	if (blueWallVisible) {
@@ -1020,15 +1068,8 @@ function levelUp() {
 		// Create new bricks
 		createBricks();
 
-		// Re-randomize the green brick position
+		// Re-randomize brick positions
 		selectRandomBrickPosition();
-
-		if (LEVEL !== 1 && LEVEL % 3 === 0) {
-			selectRandomPurpleBrickPosition();
-		} else {
-			// Reset purple brick position to null if LEVEL is not a multiple of 3
-			purpleBrickPosition = null;
-		}
 
 		// Clear projectile creation interval
 		clearInterval(projectileInterval);
@@ -1048,6 +1089,7 @@ function update() {
 	moveGreenDot();
 	moveBlueDot();
 	moveOrangeDot();
+	movePurpleDot();
 	moveOrangeProjectiles(); // Move orange projectiles
 	gameOver();
 	levelUp();
