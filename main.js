@@ -11,8 +11,8 @@ const SCORE_UNIT = 10;
 
 // CREATE THE BRICKS
 const brick = {
-	row: 1,
-	column: 4,
+	row: 3,
+	column: 6,
 	width: 50,
 	height: 10,
 	offSetLeft: 6,
@@ -78,7 +78,7 @@ let purpleBrickHit = false;
 
 let LIVES = 3;
 let SCORE = 0;
-let LEVEL = 3;
+let LEVEL = 1;
 let leftArrow = false;
 let rightArrow = false;
 let GAME_OVER = false;
