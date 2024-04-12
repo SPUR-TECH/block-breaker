@@ -12,8 +12,8 @@ const MAX_ROWS = 10;
 
 // CREATE THE BRICKS
 const brick = {
-	row: 3,
-	column: 6,
+	row: 1,
+	column: 4,
 	width: 50,
 	height: 10,
 	offSetLeft: 6,
@@ -49,6 +49,7 @@ let bricks = [];
 let greenBrickPosition = null;
 let blueBrickPosition = null;
 let orangeBrickPosition = null;
+let purpleBrickPosition = null;
 
 let greenDotX = 0; // Initial X position of the green dot
 let greenDotY = 0; // Initial Y position of the green dot
@@ -404,7 +405,7 @@ function selectRandomBlueBrickPosition() {
 	// Randomly choose a row and column within the available bricks
 	let row = Math.floor(Math.random() * brick.row);
 	let column = Math.floor(Math.random() * brick.column);
-	// Check if the selected brick is already broken, if so, choose another position
+	// Check if the selected brick is already broken or overlaps with green brick
 	while (
 		!bricks[row][column].status ||
 		(row === greenBrickPosition.row && column === greenBrickPosition.column)
@@ -413,6 +414,8 @@ function selectRandomBlueBrickPosition() {
 		column = Math.floor(Math.random() * brick.column);
 	}
 	blueBrickPosition = { row, column };
+	// Select a different position for the orange shadow and dot
+	selectRandomOrangeBrickPosition();
 }
 
 // Function to select a random brick position for orange shadow and dot
@@ -420,7 +423,7 @@ function selectRandomOrangeBrickPosition() {
 	// Randomly choose a row and column within the available bricks
 	let row = Math.floor(Math.random() * brick.row);
 	let column = Math.floor(Math.random() * brick.column);
-	// Check if the selected brick is already broken, if so, choose another position
+	// Check if the selected brick is already broken or overlaps with green or blue bricks
 	while (
 		!bricks[row][column].status ||
 		(row === greenBrickPosition.row && column === greenBrickPosition.column) ||
@@ -430,6 +433,33 @@ function selectRandomOrangeBrickPosition() {
 		column = Math.floor(Math.random() * brick.column);
 	}
 	orangeBrickPosition = { row, column };
+	// Select a different position for the purple shadow and dot
+	selectRandomPurpleBrickPosition();
+}
+
+// Function to select a random brick position for purple shadow and dot
+function selectRandomPurpleBrickPosition() {
+	// Only select a position if LEVEL is not equal to 1 and is a multiple of 3
+	if (LEVEL !== 1 && LEVEL % 3 === 0) {
+		// Randomly choose a row and column within the available bricks
+		let row = Math.floor(Math.random() * brick.row);
+		let column = Math.floor(Math.random() * brick.column);
+		// Check if the selected brick is already broken or overlaps with other bricks
+		while (
+			!bricks[row][column].status ||
+			(row === greenBrickPosition.row &&
+				column === greenBrickPosition.column) ||
+			(row === blueBrickPosition.row && column === blueBrickPosition.column) ||
+			(row === orangeBrickPosition.row && column === orangeBrickPosition.column)
+		) {
+			row = Math.floor(Math.random() * brick.row);
+			column = Math.floor(Math.random() * brick.column);
+		}
+		purpleBrickPosition = { row, column };
+	} else {
+		// If LEVEL is not a multiple of 3, set the position to null
+		purpleBrickPosition = null;
+	}
 }
 
 // Call selectRandomBrickPosition() to choose a random brick position
@@ -460,6 +490,12 @@ function drawBricks() {
 					orangeBrickPosition.column === c
 				) {
 					ctx.shadowColor = "orange"; // Set shadow color to orange for the randomly selected brick
+				} else if (
+					purpleBrickPosition &&
+					purpleBrickPosition.row === r &&
+					purpleBrickPosition.column === c
+				) {
+					ctx.shadowColor = "purple"; // Set shadow color to purple for the randomly selected brick
 				} else {
 					ctx.shadowColor = "red"; // Default shadow color
 				}
@@ -986,6 +1022,13 @@ function levelUp() {
 
 		// Re-randomize the green brick position
 		selectRandomBrickPosition();
+
+		if (LEVEL !== 1 && LEVEL % 3 === 0) {
+			selectRandomPurpleBrickPosition();
+		} else {
+			// Reset purple brick position to null if LEVEL is not a multiple of 3
+			purpleBrickPosition = null;
+		}
 
 		// Clear projectile creation interval
 		clearInterval(projectileInterval);
